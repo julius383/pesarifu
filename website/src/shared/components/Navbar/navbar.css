@@ -1,0 +1,178 @@
+nav {
+  transition: 0.5s ease;
+  -moz-transition: 0.5s ease; /* Firefox 4 */
+  -webkit-transition: 0.5s ease; /* Safari and Chrome */
+  -o-transition: 0.5s ease; /* Opera */
+  -ms-transition: 0.5s ease; /* Explorer 10 */
+}
+
+/* input[type="checkbox"] {
+  display: none;
+} */
+
+.wrapper {
+  position: fixed;
+  top: -100%;
+  /*left: -100%;*/
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--appColor-light);
+  transition: all 0.6s ease-in-out;
+}
+#active:checked ~ .wrapper {
+  /*left: 0;*/
+  top: 0;
+}
+.menu-btn,
+.menu-btn-dark {
+  position: absolute;
+  z-index: 2;
+  right: 56px;
+  /*left: 20px; */
+  top: 20px;
+  height: 50px;
+  width: 50px;
+  text-align: center;
+  line-height: 50px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.menu-btn:before,
+.menu-btn:after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 1px);
+  right: 0;
+  width: 100%;
+  border-bottom: 2px solid var(--appColor-light);
+  transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.menu-btn-dark:before,
+.menu-btn-dark:after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 1px);
+  right: 0;
+  width: 100%;
+  border-bottom: 2px solid var(--appColor-dark);
+  transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.menu-btn:before,
+.menu-btn-dark:before {
+  transform: translateY(-5px);
+}
+.menu-btn:after,
+.menu-btn-dark:after {
+  transform: translateY(5px);
+}
+.close {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: background 0.6s;
+}
+/* closing animation */
+#active:checked + .menu-btn span,
+#active:checked + .menu-btn-dark span {
+  transform: scaleX(0);
+}
+#active:checked + .menu-btn:before,
+#active:checked + .menu-btn-dark:before {
+  transform: rotate(45deg);
+  border-color: var(--appColor-dark);
+}
+#active:checked + .menu-btn:after,
+#active:checked + .menu-btn-dark:after {
+  transform: rotate(-45deg);
+  border-color: var(--appColor-dark);
+}
+
+/* For small screen nav */
+.wrapper2 {
+  position: fixed;
+  top: -100%;
+  /*left: -100%;*/
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--appColor-light);
+  transition: all 0.6s ease-in-out;
+}
+#active2:checked ~ .wrapper2 {
+  /*left: 0;*/
+  top: 0;
+}
+.menu-btn2,
+.menu-btn2-dark {
+  position: absolute;
+  z-index: 2;
+  right: 20px;
+  /*left: 20px; */
+  top: 20px;
+  height: 50px;
+  width: 50px;
+  text-align: center;
+  line-height: 50px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+.menu-btn2 span,
+.menu-btn2:before,
+.menu-btn2:after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 1px);
+  left: 30%;
+  width: 40%;
+  border-bottom: 2px solid var(--appColor-light);
+  transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.menu-btn2-dark span,
+.menu-btn2-dark:before,
+.menu-btn2-dark:after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 1px);
+  left: 30%;
+  width: 40%;
+  border-bottom: 2px solid var(--appColor-dark);
+  transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.menu-btn2:before,
+.menu-btn2-dark:before {
+  transform: translateY(-8px);
+}
+.menu-btn2:after,
+.menu-btn2-dark:after {
+  transform: translateY(8px);
+}
+.close2 {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: background 0.6s;
+}
+/* closing animation */
+#active2:checked + .menu-btn2 span,
+#active2:checked + .menu-btn2-dark span {
+  transform: scaleX(0);
+}
+#active2:checked + .menu-btn2:before,
+#active2:checked + .menu-btn2-dark:before {
+  transform: rotate(45deg);
+  border-color: var(--appColor-dark);
+}
+#active2:checked + .menu-btn2:after,
+#active2:checked + .menu-btn2-dark:after {
+  transform: rotate(-45deg);
+  border-color: var(--appColor-dark);
+}
