@@ -10,10 +10,8 @@ const MainLayout: React.FC<{}> = () => {
         <Navbar />
       </div>
 
-      <div className="largeScreenLayout">
-        <div className="w-full largeScreenSize">
-          <Outlet />
-        </div>
+      <div className="w-full">
+        <Outlet />
       </div>
 
       <div className="w-full z-30">

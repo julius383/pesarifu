@@ -109,21 +109,6 @@ body {
   background: var(--appColor-main);
 }
 
-/* For screens larger than 1536px */
-@media (min-width: 1535px) {
-  .largeScreenSize {
-    max-width: 1536px;
-  }
-  .nav_footerLargeScreenSize {
-    width: 1536px;
-  }
-  .largeScreenLayout {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-}
-
 .maintainRatio {
   width: 100%;
   height: 100%;
@@ -141,4 +126,46 @@ textarea {
   resize: none;
   background-color: transparent;
   border: 1px solid var(--appColor-dark);
+}
+
+/* Checkboxes */
+input[type="checkbox"] {
+  position: relative;
+  cursor: pointer;
+}
+input[type="checkbox"]:before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 0;
+  left: 0;
+  border: 1px solid #616161;
+  background-color: #f4f7f5;
+}
+input[type="checkbox"]:checked:before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 0;
+  left: 0;
+  background-color: #182140;
+  border: 1px solid #182140;
+}
+input[type="checkbox"]:checked:after {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 12px;
+  border: solid #f4f7f5;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  position: absolute;
+  top: 2px;
+  left: 6px;
 }

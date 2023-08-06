@@ -1,36 +1,34 @@
 nav {
-  transition: 0.5s ease;
-  -moz-transition: 0.5s ease; /* Firefox 4 */
-  -webkit-transition: 0.5s ease; /* Safari and Chrome */
-  -o-transition: 0.5s ease; /* Opera */
-  -ms-transition: 0.5s ease; /* Explorer 10 */
+  transition: all 0.5s ease-in-out;
+  -webkit-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
 }
 
-/* input[type="checkbox"] {
-  display: none;
-} */
-
+/* mobile nav */
 .wrapper {
   position: fixed;
-  top: -100%;
+  top: 0;
   /*left: -100%;*/
-  right: 0;
+  right: -100%;
   height: 100%;
   width: 100%;
-  background: var(--appColor-light);
+  background: var(--appColor-black);
+  /*background: linear-gradient(90deg, #f92c78, #4114a1);*/
+  /* background: linear-gradient(375deg, #1cc7d0, #2ede98); */
+  /* background: linear-gradient(-45deg, #e3eefe 0%, #efddfb 100%);*/
   transition: all 0.6s ease-in-out;
 }
 #active:checked ~ .wrapper {
   /*left: 0;*/
-  top: 0;
+  right: 0;
 }
-.menu-btn,
-.menu-btn-dark {
+.menu-btn {
   position: absolute;
   z-index: 2;
-  right: 56px;
+  right: 20px;
   /*left: 20px; */
-  top: 20px;
+  top: 10px;
   height: 50px;
   width: 50px;
   text-align: center;
@@ -38,37 +36,30 @@ nav {
   border-radius: 50%;
   font-size: 20px;
   cursor: pointer;
+  /*color: #fff;*/
+  /*background: linear-gradient(90deg, #f92c78, #4114a1);*/
+  /* background: linear-gradient(375deg, #1cc7d0, #2ede98); */
+  /* background: linear-gradient(-45deg, #e3eefe 0%, #efddfb 100%); */
   transition: all 0.3s ease-in-out;
 }
-
+.menu-btn span,
 .menu-btn:before,
 .menu-btn:after {
   content: "";
   position: absolute;
   top: calc(50% - 1px);
-  right: 0;
-  width: 100%;
-  border-bottom: 2px solid var(--appColor-light);
-  transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
-}
-.menu-btn-dark:before,
-.menu-btn-dark:after {
-  content: "";
-  position: absolute;
-  top: calc(50% - 1px);
-  right: 0;
-  width: 100%;
+  left: 30%;
+  width: 40%;
   border-bottom: 2px solid var(--appColor-dark);
   transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
-.menu-btn:before,
-.menu-btn-dark:before {
-  transform: translateY(-5px);
+.menu-btn:before {
+  transform: translateY(-8px);
 }
-.menu-btn:after,
-.menu-btn-dark:after {
-  transform: translateY(5px);
+.menu-btn:after {
+  transform: translateY(8px);
 }
+
 .close {
   z-index: 1;
   width: 100%;
@@ -76,103 +67,80 @@ nav {
   pointer-events: none;
   transition: background 0.6s;
 }
+
 /* closing animation */
-#active:checked + .menu-btn span,
-#active:checked + .menu-btn-dark span {
+#active:checked + .menu-btn span {
   transform: scaleX(0);
 }
-#active:checked + .menu-btn:before,
-#active:checked + .menu-btn-dark:before {
+#active:checked + .menu-btn:before {
   transform: rotate(45deg);
-  border-color: var(--appColor-dark);
+  border-color: var(--appColor-light);
 }
-#active:checked + .menu-btn:after,
-#active:checked + .menu-btn-dark:after {
+#active:checked + .menu-btn:after {
   transform: rotate(-45deg);
-  border-color: var(--appColor-dark);
+  border-color: var(--appColor-light);
 }
-
-/* For small screen nav */
-.wrapper2 {
-  position: fixed;
-  top: -100%;
-  /*left: -100%;*/
-  right: 0;
-  height: 100%;
-  width: 100%;
-  background: var(--appColor-light);
-  transition: all 0.6s ease-in-out;
-}
-#active2:checked ~ .wrapper2 {
-  /*left: 0;*/
-  top: 0;
-}
-.menu-btn2,
-.menu-btn2-dark {
+.wrapper ul {
   position: absolute;
-  z-index: 2;
-  right: 20px;
-  /*left: 20px; */
-  top: 20px;
-  height: 50px;
-  width: 50px;
+  top: 60%;
+  left: 50%;
+  height: 90%;
+  transform: translate(-50%, -50%);
+  list-style: none;
   text-align: center;
+}
+.wrapper ul li {
+  height: 10%;
+  margin: 15px 0;
+}
+.wrapper ul li a {
+  text-decoration: none;
+  font-size: 30px;
+  font-weight: 500;
+  padding: 5px 30px;
+  color: var(--appColor-light);
+  border-radius: 50px;
+  position: absolute;
   line-height: 50px;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-}
-.menu-btn2 span,
-.menu-btn2:before,
-.menu-btn2:after {
-  content: "";
-  position: absolute;
-  top: calc(50% - 1px);
-  left: 30%;
-  width: 40%;
-  border-bottom: 2px solid var(--appColor-light);
+  margin: 5px 30px;
+  opacity: 0;
+  transition: all 0.3s ease;
   transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
-
-.menu-btn2-dark span,
-.menu-btn2-dark:before,
-.menu-btn2-dark:after {
-  content: "";
+.wrapper ul li a:after {
   position: absolute;
-  top: calc(50% - 1px);
-  left: 30%;
-  width: 40%;
-  border-bottom: 2px solid var(--appColor-dark);
-  transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
-}
-.menu-btn2:before,
-.menu-btn2-dark:before {
-  transform: translateY(-8px);
-}
-.menu-btn2:after,
-.menu-btn2-dark:after {
-  transform: translateY(8px);
-}
-.close2 {
-  z-index: 1;
+  content: "";
+  background: var(--appColor-light);
+  /*background: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);*/
+  /*background: linear-gradient(375deg, #1cc7d0, #2ede98);*/
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  transition: background 0.6s;
+  left: 0;
+  top: 0;
+  border-radius: 50px;
+  transform: scaleY(0);
+  z-index: -1;
+  transition: transform 0.3s ease;
 }
-/* closing animation */
-#active2:checked + .menu-btn2 span,
-#active2:checked + .menu-btn2-dark span {
-  transform: scaleX(0);
+.wrapper ul li a:hover:after {
+  transform: scaleY(1);
 }
-#active2:checked + .menu-btn2:before,
-#active2:checked + .menu-btn2-dark:before {
-  transform: rotate(45deg);
-  border-color: var(--appColor-dark);
+.wrapper ul li a:hover {
+  color: var(--appColor-dark);
 }
-#active2:checked + .menu-btn2:after,
-#active2:checked + .menu-btn2-dark:after {
-  transform: rotate(-45deg);
-  border-color: var(--appColor-dark);
+input[type="checkbox"] {
+  display: none;
+}
+#active:checked ~ .wrapper ul li a {
+  opacity: 1;
+}
+.wrapper ul li a {
+  transition: opacity 1.2s, transform 1.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transform: translateX(100px);
+}
+#active:checked ~ .wrapper ul li a {
+  transform: none;
+  transition-timing-function: ease, cubic-bezier(0.1, 1.3, 0.3, 1); /* easeOutBackを緩めた感じ */
+  transition-delay: 0.6s;
+  transform: translateX(-100px);
 }
