@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./navbar.css";
 import Button from "../Button";
 import { Link } from "react-router-dom";

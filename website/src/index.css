@@ -17,8 +17,8 @@
 }
 
 * {
-  font-family: "Poppins", sans-serif;
-  /* font-family: 'Lato', sans-serif; */
+  /* font-family: "Poppins", sans-serif; */
+  font-family: 'Lato', sans-serif;
 }
 
 body {
@@ -168,4 +168,13 @@ input[type="checkbox"]:checked:after {
   position: absolute;
   top: 2px;
   left: 6px;
+}
+
+.footerCurtain {
+  background-image: linear-gradient(
+    to bottom,
+    var(--appColor-light) 0,
+    var(--appColor-light) calc(100% - 100vh),
+    transparent 0
+  );
 }

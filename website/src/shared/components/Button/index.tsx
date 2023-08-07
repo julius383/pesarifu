@@ -4,6 +4,7 @@ import "./button.css";
 export interface ButtonProps {
   id?: string;
   type?: any;
+  title?: string;
   className?: string;
   primary?: boolean;
   option?: "circle" | "rounded" | "slightlyRounded" | "box" | "line";
@@ -23,6 +24,7 @@ export interface ButtonProps {
 const Button: React.FC<ButtonProps> = ({
   id = "",
   type,
+  title,
   className,
   primary = true,
   option,
@@ -45,6 +47,7 @@ const Button: React.FC<ButtonProps> = ({
     <button
       id={id}
       type={type}
+      title={title}
       className={["buttonStyle", `buttonStyle--${option}`, className, mode].join(" ")}
       style={{ width, padding, backgroundColor, fontSize, color, border }}
       {...props}

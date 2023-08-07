@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 
 const MainLayout: React.FC<{}> = () => {
   return (
-    <div className="w-full">
+    <div className="w-full footerCurtain">
       <div className="w-full z-30">
         <Navbar />
       </div>
@@ -14,7 +14,7 @@ const MainLayout: React.FC<{}> = () => {
         <Outlet />
       </div>
 
-      <div className="w-full z-30">
+      <div className="w-full h-screen bottom-0 sticky -z-20">
         <Footer />
       </div>
     </div>
