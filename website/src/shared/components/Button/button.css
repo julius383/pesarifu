@@ -12,7 +12,7 @@ button:focus {
 
 .buttonStyle {
   box-sizing: border-box;
-  padding: 6px 25px;
+  padding: 8px 25px;
   cursor: pointer;
 }
 
