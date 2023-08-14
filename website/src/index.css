@@ -4,16 +4,16 @@
 
 :root {
   --appColor-black: #000000;
-  --appColor-dark: #242220;
-  --appColor-darkAccent: #0f121d;
-  --appColor-main: #25283b;
-  --appColor-lightAccent: #8b8277;
-  --appColor-light: #f3f0ee;
+  --appColor-dark: #2d3040;
+  --appColor-darkAccent: #75736d;
+  --appColor-main: #11aecb;
+  --appColor-lightAccent: #8f9ca9;
+  --appColor-light: #ededf0;
   --appColor-white: #ffffff;
   --appColor-error: #ff7961;
   --appColor-errorText: #ba000d;
   --appColor-success: #77b454;
-  --appColor-successText: #478427;
+  --appColor-successText: #3AAF75;
 }
 
 * {
