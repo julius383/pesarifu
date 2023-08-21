@@ -1,14 +1,22 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import Avatar from "boring-avatars";
 import { IBlogsProps, blogs_data } from "../../data/sample-blog";
 import InputWithButton from "../../shared/components/InputWithButton";
 import BlogPostCard from "../../shared/components/BlogPostCard";
+import Button from "../../shared/components/Button";
+import Newsletter from "../../shared/components/Newsletter";
 
 const Blog: React.FC<{}> = () => {
+  let navigate = useNavigate();
+
+  const openBlogPost = (id: number) => {
+    navigate(`/blog/${id}`);
+  };
   return (
     <div className="w-full flex flex-row justify-center">
-      <div className="max-w-[1536px] w-full flex flex-col gap-5 md:px-5 px-10 py-24">
+      <div className="max-w-[1536px] w-full flex flex-col gap-5 md:px-5 px-20 py-24">
         {/* Blog intro */}
         <div className="w-full flex flex-col items-center">
           <h1 className="md:text-2xl text-4xl font-bold text-center">
@@ -43,9 +51,12 @@ const Blog: React.FC<{}> = () => {
         </div>
 
         {/* New/highlighted blog post */}
-        <div className="w-full my-20 flex md:flex-col flex-row gap-5">
+        <div className="w-full my-20 flex md:flex-col flex-row gap-10">
           {/* Blog image */}
-          <div className="md:w-full w-1/2">
+          <div
+            className="md:w-full w-1/2 cursor-pointer"
+            onClick={() => openBlogPost(blogs_data[0].id)}
+          >
             <img
               className="w-full h-full object-cover rounded-[15px]"
               src={blogs_data[0].image}
@@ -54,7 +65,10 @@ const Blog: React.FC<{}> = () => {
           </div>
 
           {/* Blog details */}
-          <div className="flex flex-col justify-center">
+          <div
+            className="flex flex-col justify-center cursor-pointer"
+            onClick={() => openBlogPost(blogs_data[0].id)}
+          >
             <p className="textColorDarkAccent">
               {blogs_data[0].tags.map(
                 (tag: string, index: number, arr: string[]) => (
@@ -66,9 +80,9 @@ const Blog: React.FC<{}> = () => {
               )}
             </p>
 
-            <h1 className="mt-3 md:text-xl text-3xl font-bold">
+            <h2 className="mt-3 md:text-xl text-3xl font-bold">
               {blogs_data[0].title}
-            </h1>
+            </h2>
 
             <div className="mt-10 flex flex-row items-center gap-2">
               <Avatar
@@ -93,11 +107,26 @@ const Blog: React.FC<{}> = () => {
         </div>
 
         {/* Other blogs */}
-        <div className="">
+        <div className="w-full grid md:grid-cols-1 grid-cols-3 gap-10">
           {blogs_data.map((blog: IBlogsProps, index: number) => (
-            <BlogPostCard key={index} blogPost={blog} />
+            <BlogPostCard key={index} blogPost={blog} className="w-full" />
           ))}
         </div>
+
+        <div className="my-10 text-center">
+          <Button
+            id="loadMore"
+            className="text-lg"
+            backgroundColor="transparent"
+            type="button"
+            option="rounded"
+            label="Load More"
+            border="1px solid var(--appColor-darkAccent)"
+            onClick={() => {}}
+          />
+        </div>
+
+        <Newsletter className="w-full" />
       </div>
     </div>
   );
