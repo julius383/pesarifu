@@ -50,7 +50,7 @@ const Footer: React.FC<{}> = () => {
           <div className="">
             <p className="text-sm">
               &copy; {getYear()}{" "}
-              <a href="https://google.com/"> M-Pesa Analytics.</a>
+              <a href="https://google.com/"> Pesarifu.</a>
             </p>
           </div>
 
