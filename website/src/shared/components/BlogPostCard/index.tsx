@@ -45,7 +45,7 @@ const BlogPostCard: React.FC<PropsWithChildren<IProps>> = (props) => {
 
       <h2 className="mt-3 text-2xl font-bold">{blogPost.title}</h2>
 
-      <p className="mt-3 truncateParagraph">{blogPost.text}</p>
+      <p className="mt-3 truncateParagraph">{blogPost.paragraphs[0]}</p>
 
       <div className="mt-10 flex flex-row items-center gap-2">
         <Avatar
