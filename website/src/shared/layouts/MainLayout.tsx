@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 const MainLayout: React.FC<{}> = () => {
   return (
     <div className="w-full footerCurtain">
-      <div className="w-full z-30">
+      <div className="w-full fixed z-30">
         <Navbar />
       </div>
 
