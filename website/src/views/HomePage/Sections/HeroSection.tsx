@@ -16,7 +16,7 @@ const HeroSection: React.FC<{}> = () => {
         {/* First half of the section */}
         <div className="md:w-full w-1/2 md-min:ml-5 flex flex-col justify-center">
           <h1 className="md:text-2xl text-4xl font-bold">
-            Unlock Powerful Insights with Pesarifu:
+            Unlock Powerful Insights with Pesarifu
           </h1>
           <TypeAnimation
             sequence={[
