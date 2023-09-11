@@ -56,7 +56,7 @@ const HeroSection: React.FC<{}> = () => {
                 option="rounded"
                 label="Learn More"
                 padding="8px 10px"
-                onClick={() => scrollTo("why-choose-us")}
+                onClick={() => scrollTo("intro-section")}
               />
 
               <Icon
