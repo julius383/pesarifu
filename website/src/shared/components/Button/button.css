@@ -1,0 +1,61 @@
+:root {
+  --btnBorder-color: var(--appColor-light);
+  --btnPrimary-bgColor: var(--appColor-light);
+  --btnSecondary-bgColor: transparent;
+  --btnPrimary-textColor: inherit;
+  --btnSecondary-textColor: inherit;
+}
+
+button:focus {
+    outline: none;
+}
+
+.buttonStyle {
+  box-sizing: border-box;
+  padding: 8px 25px;
+  cursor: pointer;
+}
+
+.buttonStyle--primary {
+  border: 0px;
+  background-color: var(--btnPrimary-bgColor);
+  color: var(--btnPrimary-textColor);
+}
+.buttonStyle--secondary {
+  border: 1px solid var(--btnBorder-color);
+  background-color: var(--btnSecondary-bgColor);
+  color: var(--btnSecondary-textColor);
+}
+
+.buttonStyle--circle {
+  padding: 10px;
+  border-radius: 100px;
+}
+.buttonStyle--rounded {
+  border-radius: 50px;
+}
+.buttonStyle--slightlyRounded {
+  border-radius: 10px;
+}
+.buttonStyle--box {
+  border-radius: 0;
+}
+.buttonStyle--line {
+  border-radius: 0;
+}
+
+
+.btnIcon--div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.btnIcon {
+  display: inline-flex;
+}
+.btnIcon--withIcon {
+  margin-right: 7px;
+}
+
+
