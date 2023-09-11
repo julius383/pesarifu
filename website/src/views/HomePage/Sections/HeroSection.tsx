@@ -1,24 +1,40 @@
 import React from "react";
-import Button from "../../../shared/components/Button";
 import { Icon } from "@iconify/react";
+import { TypeAnimation } from "react-type-animation";
+import Button from "../../../shared/components/Button";
+import Abstract from "../../../assets/abstract.webp";
 
 const HeroSection: React.FC<{}> = () => {
+  const scrollTo = (section: string) => {
+    const element = document.getElementById(section);
+    element && element.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="w-full flex flex-row justify-center">
-      <div className="max-w-[1536px] w-full md-min:h-screen flex md:flex-col flex-row gap-5 md:px-5 px-10 py-24">
+      <div className="max-w-[1536px] w-full h-screen flex md:flex-col flex-row md:justify-center gap-5 md:px-5 px-10 py-24">
         {/* First half of the section */}
-        <div className="md:w-full w-1/2 flex flex-col justify-center">
+        <div className="md:w-full w-1/2 md-min:ml-5 flex flex-col justify-center">
           <h1 className="md:text-2xl text-4xl font-bold">
-            Unlock Powerful Insights with M-Pesa Analytics:
+            Unlock Powerful Insights with Pesarifu:
           </h1>
-          <h3 className="mt-5 md:text-xl text-2xl font-light">
-            Harness the Hidden Potential of Your Financial Data!
-          </h3>
+          <TypeAnimation
+            sequence={[
+              "Harness the Hidden Potential of Your Financial Data!",
+              5000,
+              "Turn Your M-Pesa Activities into Actionable Intelligence",
+              5000,
+            ]}
+            wrapper="span"
+            speed={70}
+            repeat={Infinity}
+            className="mt-5 md:text-xl text-2xl font-light"
+          />
 
           <div className="mt-10 flex flex-row items-center md:gap-1 gap-10 text-lg">
             <div className="">
               <Button
-                id="login"
+                id="sign-up"
                 className=""
                 backgroundColor="var(--appColor-dark)"
                 color="var(--appColor-light)"
@@ -40,7 +56,7 @@ const HeroSection: React.FC<{}> = () => {
                 option="rounded"
                 label="Learn More"
                 padding="8px 10px"
-                onClick={() => {}}
+                onClick={() => scrollTo("why-choose-us")}
               />
 
               <Icon
@@ -53,7 +69,17 @@ const HeroSection: React.FC<{}> = () => {
         </div>
 
         {/* Second half */}
-        <div className="md:w-full w-1/2 flex flex-col justify-center items-center">
+        <div className="md:hidden w-1/2 h-full flex flex-col justify-center items-center">
+          <div className="w-full h-full">
+            <img
+              className="w-full h-full object-contain"
+              src={Abstract}
+              alt="Abstract"
+            />
+          </div>
+        </div>
+
+        {/* <div className="md:w-full w-1/2 flex flex-col justify-center items-center">
           <div className="w-11/12 h-3/4 rounded-2xl appBgColorDark relative">
             <div className="absolute top-5 left-5">
               <p className="textColorLight">Transactions</p>
@@ -70,7 +96,7 @@ const HeroSection: React.FC<{}> = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

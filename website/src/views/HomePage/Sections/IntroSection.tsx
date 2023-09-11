@@ -3,10 +3,10 @@ import React from "react";
 const IntroSection: React.FC<{}> = () => {
   return (
     <div className="w-full flex flex-row justify-center">
-      <div className="max-w-[1536px] w-full flex flex-col gap-5 md:px-5 px-10 py-24">
+      <div id="intro-section" className="max-w-[1536px] w-full flex flex-col gap-5 md:px-5 px-10 py-24">
         <div className="w-full py-20">
           <p className="w-1/2 md:text-2xl text-4xl font-bold">
-            Welcome to M-Pesa Analytics, where data-driven decisions meet
+            Welcome to Pesarifu, where data-driven decisions meet
             financial empowerment!
           </p>
         </div>
