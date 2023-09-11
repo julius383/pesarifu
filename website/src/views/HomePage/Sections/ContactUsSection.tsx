@@ -47,7 +47,7 @@ const ContactUsSection: React.FC<{}> = () => {
 
   useEffect(() => {
     setValue("email", email);
-  }, [name]);
+  }, [email]);
 
   const handleBusinessNameChange = (event: any) => {
     event.persist();
@@ -220,20 +220,20 @@ const ContactUsSection: React.FC<{}> = () => {
                 placeholder=""
               />
             </div>
-          </form>
 
-          <div className="mt-10 text-center">
-            <Button
-              id="send"
-              className=""
-              backgroundColor="var(--appColor-dark)"
-              color="var(--appColor-light)"
-              type="submit"
-              option="rounded"
-              label="Send message"
-              border="1px solid var(--appColor-dark)"
-            />
-          </div>
+            <div className="md-min:col-span-2 mt-10 text-center">
+              <Button
+                id="send"
+                className=""
+                backgroundColor="var(--appColor-dark)"
+                color="var(--appColor-light)"
+                type="submit"
+                option="rounded"
+                label="Send message"
+                border="1px solid var(--appColor-dark)"
+              />
+            </div>
+          </form>
         </div>
       </div>
     </div>
