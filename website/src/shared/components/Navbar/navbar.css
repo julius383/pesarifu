@@ -145,13 +145,6 @@ input[type="checkbox"] {
   transform: translateX(-100px);
 }
 
-.neumorphism {
-  background: #f0f0f3;
-  box-shadow: -2.17893px -2.17893px 6.5368px #ffffff,
-    2.17893px 2.17893px 6.5368px rgba(174, 174, 192, 0.4);
-  border-radius: 21.3535px;
-}
-
 .navChipBorder{
   border: 1px solid var(--appColor-dark);
 }
