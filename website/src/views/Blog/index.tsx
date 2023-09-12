@@ -16,7 +16,7 @@ const Blog: React.FC<{}> = () => {
   };
   return (
     <div className="w-full flex flex-row justify-center">
-      <div className="max-w-[1536px] w-full flex flex-col gap-5 md:px-5 px-20 py-24">
+      <div className="max-w-[1536px] w-full flex flex-col gap-5 md:px-5 px-20 pt-28 pb-24">
         {/* Blog intro */}
         <div className="w-full flex flex-col items-center">
           <h1 className="md:text-2xl text-4xl font-bold text-center">
