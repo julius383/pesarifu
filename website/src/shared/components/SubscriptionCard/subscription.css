@@ -1,0 +1,22 @@
+.neumorphism {
+  background: #f0f0f3;
+  box-shadow: -2.17893px -2.17893px 6.5368px #ffffff,
+    2.17893px 2.17893px 6.5368px rgba(174, 174, 192, 0.4);
+  border-radius: 21.3535px;
+}
+
+.subscriptionCard:nth-child(1) .subscriptionSeparator {
+  background-color: #00ff00;
+  box-shadow: 0 0 5px #00ff00, 0 0 15px #00ff00, 0 0 20px #00ff00,
+    0 0 40px #00ff00, 0 0 60px #008000, 0 0 10px #00ff00, 0 0 98px #008000;
+}
+.subscriptionCard:nth-child(2) .subscriptionSeparator {
+  background-color: #87ceeb;
+  box-shadow: 0 0 5px #87ceeb, 0 0 15px #87ceeb, 0 0 20px #87ceeb,
+    0 0 40px #87ceeb, 0 0 60px #00bfff, 0 0 10px #00bfff, 0 0 98px #00bfff;
+}
+.subscriptionCard:nth-child(3) .subscriptionSeparator {
+  background-color: #800080;
+  box-shadow: 0 0 5px #800080, 0 0 15px #800080, 0 0 20px #800080,
+    0 0 40px #800080, 0 0 60px #9400d3, 0 0 10px #9400d3, 0 0 98px #9400d3;
+}
