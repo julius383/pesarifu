@@ -38,7 +38,7 @@ const ContactUsSection: React.FC<{}> = () => {
 
   useEffect(() => {
     setValue("name", name);
-  }, [name]);
+  }, [name, setValue]);
 
   const handleEmailChange = (event: any) => {
     event.persist();
@@ -47,7 +47,7 @@ const ContactUsSection: React.FC<{}> = () => {
 
   useEffect(() => {
     setValue("email", email);
-  }, [email]);
+  }, [email, setValue]);
 
   const handleBusinessNameChange = (event: any) => {
     event.persist();
@@ -56,7 +56,7 @@ const ContactUsSection: React.FC<{}> = () => {
 
   useEffect(() => {
     setValue("business_name", businessName);
-  }, [businessName]);
+  }, [businessName, setValue]);
 
   const handlePhoneNoChange = (event: any) => {
     event.persist();
@@ -65,7 +65,7 @@ const ContactUsSection: React.FC<{}> = () => {
 
   useEffect(() => {
     setValue("phone_number", phoneNo);
-  }, [phoneNo]);
+  }, [phoneNo, setValue]);
 
   const handleMessageChange = (event: any) => {
     event.persist();
@@ -74,7 +74,7 @@ const ContactUsSection: React.FC<{}> = () => {
 
   useEffect(() => {
     setValue("message", message);
-  }, [message]);
+  }, [message, setValue]);
 
   const onSubmit = handleSubmit((data: FormProps) => {
     if (data["business_name"] === "") {
@@ -97,11 +97,8 @@ const ContactUsSection: React.FC<{}> = () => {
   };
 
   return (
-    <div className="w-full flex flex-row justify-center">
-      <div
-        id="contact-us"
-        className="max-w-[1536px] w-full flex md:flex-col flex-row gap-5 md:px-5 px-10 py-24"
-      >
+    <div id="contact-us" className="w-full flex flex-row justify-center">
+      <div className="max-w-[1536px] w-full flex md:flex-col flex-row gap-5 md:px-5 px-10 py-24">
         <div className="md:w-full w-1/2 flex flex-col">
           <p className="md:text-xl text-3xl font-bold">Any questions?</p>
           <p className="mt-1 md:text-xl text-3xl font-bold">
