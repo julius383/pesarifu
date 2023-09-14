@@ -3,13 +3,9 @@ import { Icon } from "@iconify/react";
 import { TypeAnimation } from "react-type-animation";
 import Button from "../../../shared/components/Button";
 import Abstract from "../../../assets/abstract.webp";
+import scrollTo from "../../../shared/functions/scrollTo";
 
 const HeroSection: React.FC<{}> = () => {
-  const scrollTo = (section: string) => {
-    const element = document.getElementById(section);
-    element && element.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <div className="w-full flex flex-row justify-center">
       <div className="max-w-[1536px] w-full h-screen flex md:flex-col flex-row md:justify-center gap-5 md:px-5 px-10 py-24">

@@ -1,19 +1,34 @@
 import React from "react";
 import "./navbar.css";
 import Button from "../Button";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import scrollTo from "../../functions/scrollTo";
 
 interface MenuItem {
   name: string;
   route: string;
+  type: "link" | "in-page-link";
 }
 
 const Navbar: React.FC<{}> = () => {
+  const location = useLocation();
+  let navigate = useNavigate();
+
   const menuItems: MenuItem[] = [
-    { name: "Pricing", route: "/subscriptions" },
-    { name: "Blog", route: "/blog" },
-    { name: "Contact Us", route: "/#contact-us" },
+    { name: "Pricing", route: "/subscriptions", type: "link" },
+    { name: "Blog", route: "/blog", type: "link" },
+    { name: "Contact Us", route: "contact-us", type: "in-page-link" },
   ];
+
+  const scrollToInPageLink = (link: string) => {
+    if (location.pathname !== "/") {
+      navigate("/");
+    }
+
+    setTimeout(() => {
+      scrollTo(link);
+    }, 500);
+  };
 
   return (
     <nav className="w-full absolute top-0 z-30">
@@ -35,9 +50,22 @@ const Navbar: React.FC<{}> = () => {
             <div className="flex flex-row items-center gap-5 mr-10">
               {menuItems.map((item: MenuItem, index: number) => (
                 <>
-                  <Link to={item.route} className="font-medium text-lg">
-                    {item.name}
-                  </Link>
+                  {item.type === "link" ? (
+                    <>
+                      <Link to={item.route} className="font-medium text-lg">
+                        {item.name}
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <p
+                        className="font-medium text-lg cursor-pointer"
+                        onClick={() => scrollToInPageLink(item.route)}
+                      >
+                        {item.name}
+                      </p>
+                    </>
+                  )}
                 </>
               ))}
             </div>
