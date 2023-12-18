@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "pesarifu"
+version = "0.1.0"
+description = ""
+authors = ["Julius Kibunjia <kibunjiajulius@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">3.10,<4.0"
+rich = "^13.4.2"
+tabula-py = "^2.7.0"
+uvicorn = {extras = ["standard"], version = "^0.23.2"}
+bcrypt = "^4.0.1"
+funcy = "^2.0"
+python-dateutil = "^2.8.2"
+watchdog = "^3.0.0"
+jinja2 = "^3.1.2"
+pandas = "^2.1.4"
+litestar = {extras = ["pydantic"], version = "^2.4.4"}
+simplejson = "^3.19.2"
+sh = "^2.0.6"
+toolz = "^0.12.0"
+psycopg = {extras = ["binary"], version = "^3.1.15"}
+flask = "^3.0.0"
+flask-pydantic = "^0.11.0"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.14.0"
+Faker = "^19.2.0"
+icecream = "^2.1.3"
+tabulate = "^0.9.0"
+psycopg2 = "^2.9.6"
+thefuzz = {extras = ["speedup"], version = "^0.19.0"}
+iso3166 = "^2.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+pythonVersion = '3.10'
+
+[tool.black]
+line-length = 79
+target-version = ["py310"]
+
+[tool.isort]
+py_version = 310
+skip_gitignore = true
+profile = "black"
