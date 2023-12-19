@@ -80,24 +80,24 @@ def normalize_key(key: Any) -> str:
 def convert_to_cash(v: str | float | Decimal) -> Decimal:
     if isinstance(v, Decimal):
         return v
-    elif isinstance(v, float) or isinstance(v, int):
+    if isinstance(v, (float, int)):
         return Decimal(v)
-    elif isinstance(v, str):
+    if isinstance(v, str):
         cleaned = re.sub(r"\s|[^0-9.-]", "", v)
         return Decimal(cleaned)
-    else:
-        raise ValueError(f"Can't convert {v} of type {type(v)} to Decimal")
+    msg = f"Unable to convert {v} of type {type(v)} to Decimal"
+    logger.error(msg)
+    raise ValueError(msg)
 
 
 def is_header(header1: str, header2: str) -> bool:
     """Returns True if header1 and header2 are similar."""
     return any(
-        [
-            fuzz.ratio(x, y) >= 60 and abs(len(x) - len(y)) <= 3
-            for (x, y) in zip(
-                map(normalize_key, header1), map(normalize_key, header2)
-            )
-        ]
+        fuzz.ratio(x, y) >= 60 and abs(len(x) - len(y)) <= 3
+        for (x, y) in zip(
+            map(normalize_key, header1), map(normalize_key, header2)
+        )
+
     )
 
 
@@ -113,13 +113,13 @@ def save_results(path: str):
                 if to.exists():
                     new_path = to.with_stem(
                         f"{to.stem}-{int(time.monotonic())}")
-                    print(f"{path} already exists writing to {new_path}")
+                    logger.info(f"{path} already exists writing to {new_path}")
                     to = new_path
                 with open(to.with_suffix('.json'), 'w', encoding='utf-8') as fp:
                     json.dump(res, fp, default=encode_datetime)
-                    print(f"Results written to {to}")
-            except TypeError:
-                print("Could not encode json")
+                    logger.info(f"Results written to {to}")
+            except TypeError as e:
+                logger.error("Could not encode json", e)
             return res
         return wrapper_save_output
     return decorator_save_output
@@ -162,7 +162,6 @@ def read_pdf(
     )
     column_names = [normalize_key(i) for i in column_names]
     results = []
-    # TODO: handle table with info related to owner of PDF
     # TODO: try and simplfy the code below
     for table in tables:
         if len(table.columns) != len(columns_xcoords):
