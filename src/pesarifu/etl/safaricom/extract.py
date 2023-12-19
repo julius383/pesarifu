@@ -6,7 +6,7 @@ import re
 
 from dateutil.parser import isoparse
 from icecream import ic
-from sh import pdftotext, sed
+from sh import ErrorReturnCode, pdftotext, sed
 from toolz import update_in
 
 from pesarifu.util.helpers import (
@@ -74,7 +74,7 @@ def parse_date(date: str) -> datetime:
                     match.group("day"),
                 ],
             )
-        )
+        ).timestamp()
     raise ParseError(f"{date} does not match expected pattern {p}")
 
 
@@ -87,15 +87,20 @@ def parse_phone(number: str) -> str:
     raise ParseError(f"{number} does not match expected pattern {p}")
 
 
-def get_metadata_from_pdf(path: Path) -> dict[str, Any] | None:
+def get_metadata_from_pdf(path: Path) -> dict[str, Any]:
     "Extract user information from header in Mpesa statement"
-    output = sed(
-        "-E",
-        "-n",
-        "-e",
-        "/^MPESA FULL STATEMENT/,/^SUMMARY/p",
-        _in=pdftotext("-f", 1, "-l", 1, path, "-"),
-    )
+    try:
+        output = sed(
+            "-E",
+            "-n",
+            "-e",
+            "/^MPESA FULL STATEMENT/,/^SUMMARY/p",
+            _in=pdftotext("-f", 1, "-l", 1, path, "-"),
+        )
+    except ErrorReturnCode as e:
+        raise ValueError from e
+    if not output:
+        raise ValueError
     lines: list[str] = output.strip().split("\n")
     cleaned_lines = list(filter(bool, lines[1:-2]))
     if len(cleaned_lines) % 2 != 0:
@@ -109,8 +114,8 @@ def get_metadata_from_pdf(path: Path) -> dict[str, Any] | None:
     metadata["date_of_statement"] = parse_date(metadata["date_of_statement"])
     start, end = metadata["statement_period"].split(" - ")
     metadata["statement_period"] = {
-        "start": parse_date(start),
-        "end": parse_date(end),
+        "start_ts": parse_date(start),
+        "end_ts": parse_date(end),
     }
     return metadata
 

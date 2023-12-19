@@ -6,19 +6,53 @@ import time
 from decimal import Decimal
 from itertools import takewhile
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, BinaryIO
+from uuid import uuid4
+import logging
 
 import pandas as pd
 import simplejson as json
 import tabula
+from dotenv import find_dotenv, dotenv_values
+import structlog
+from pypdf import PdfReader, PdfWriter
 
 # from icecream import ic
 from thefuzz import fuzz
 
 
+ROOT_DIR: Path = Path(find_dotenv(".env")).absolute().parent
+STATEMENTS_BASE_DIR = ROOT_DIR / 'statements'
+CONFIG: dict[str, str | None] = dotenv_values(".env")
+
+
+def configure_logger():
+    if (level := CONFIG.get('LOG_LEVEL', None)) is None:
+        level = 'INFO'
+    else:
+        level = level.upper()
+    log_level = getattr(logging, level)
+    structlog.configure(
+        wrapper_class=structlog.make_filtering_bound_logger(log_level),
+        processors=[
+            structlog.contextvars.merge_contextvars,
+            structlog.processors.add_log_level,
+            structlog.processors.StackInfoRenderer(),
+            structlog.dev.set_exc_info,
+            structlog.processors.format_exc_info,
+            structlog.processors.TimeStamper(
+                fmt="%Y-%m-%d %H:%M:%S", utc=False),
+            structlog.dev.ConsoleRenderer(),
+        ]
+    )
+    return structlog.get_logger()
+
+
+logger = configure_logger()
+
+
 class ParseError(Exception):
     """Error raised when some input can't be parsed into the expected object"""
-    pass
 
 
 def encode_datetime(obj):
@@ -160,3 +194,20 @@ def read_pdf(
             results.append(record)
             index += 1
     return results
+
+
+def decrypt_pdf(data: BinaryIO, password: str | None) -> Path:
+    """Decrypt PDF and copy it to statements directory."""
+    reader = PdfReader(data)
+    writer = PdfWriter()
+    uuid = uuid4()
+    if reader.is_encrypted:
+        if password is None:
+            raise KeyError("Password not provided for encrypted pdf")
+        reader.decrypt(password)
+    for page in reader.pages:
+        writer.add_page(page)
+    ofile = STATEMENTS_BASE_DIR / Path(uuid.hex).with_suffix('.pdf')
+    with open(ofile, "wb") as fp:
+        writer.write(fp)
+    return ofile
