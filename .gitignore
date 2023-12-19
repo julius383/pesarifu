@@ -131,6 +131,10 @@ cython_debug/
 
 examples/
 
-src/pesarifu/api/queries/*.py
-
 *.vim
+
+statements/
+
+*.json
+
+.envrc
