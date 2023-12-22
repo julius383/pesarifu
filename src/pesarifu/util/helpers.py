@@ -1,34 +1,33 @@
 import datetime
 import functools
+import logging
 import math
 import re
 import time
 from decimal import Decimal
 from itertools import takewhile
 from pathlib import Path
-from typing import Any, Dict, List, Optional, BinaryIO
+from typing import Any, BinaryIO, Dict, List, Optional
 from uuid import uuid4
-import logging
 
 import pandas as pd
 import simplejson as json
-import tabula
-from dotenv import find_dotenv, dotenv_values
 import structlog
+import tabula
+from dotenv import dotenv_values, find_dotenv
 from pypdf import PdfReader, PdfWriter
 
 # from icecream import ic
 from thefuzz import fuzz
 
-
 ROOT_DIR: Path = Path(find_dotenv(".env")).absolute().parent
-STATEMENTS_BASE_DIR = ROOT_DIR / 'statements'
+STATEMENTS_BASE_DIR = ROOT_DIR / "statements"
 CONFIG: dict[str, str | None] = dotenv_values(".env")
 
 
 def configure_logger():
-    if (level := CONFIG.get('LOG_LEVEL', None)) is None:
-        level = 'INFO'
+    if (level := CONFIG.get("LOG_LEVEL", None)) is None:
+        level = "INFO"
     else:
         level = level.upper()
     log_level = getattr(logging, level)
@@ -41,9 +40,10 @@ def configure_logger():
             structlog.dev.set_exc_info,
             structlog.processors.format_exc_info,
             structlog.processors.TimeStamper(
-                fmt="%Y-%m-%d %H:%M:%S", utc=False),
+                fmt="%Y-%m-%d %H:%M:%S", utc=False
+            ),
             structlog.dev.ConsoleRenderer(),
-        ]
+        ],
     )
     return structlog.get_logger()
 
@@ -65,15 +65,7 @@ def normalize_key(key: Any) -> str:
     return re.sub(
         r"[:]",
         "",
-        re.sub(
-            r"\s",
-            "_",
-            re.sub(
-                r"\s{2,}",
-                " ",
-                str(key).lower().strip()
-            )
-        )
+        re.sub(r"\s", "_", re.sub(r"\s{2,}", " ", str(key).lower().strip())),
     )
 
 
@@ -97,13 +89,13 @@ def is_header(header1: str, header2: str) -> bool:
         for (x, y) in zip(
             map(normalize_key, header1), map(normalize_key, header2)
         )
-
     )
 
 
 # https://realpython.com/primer-on-python-decorators/#decorators-with-arguments
 def save_results(path: str):
     """Decorator that saves output of function to `path` as json"""
+
     def decorator_save_output(func):
         @functools.wraps(func)
         def wrapper_save_output(*args, **kwargs):
@@ -112,16 +104,21 @@ def save_results(path: str):
             try:
                 if to.exists():
                     new_path = to.with_stem(
-                        f"{to.stem}-{int(time.monotonic())}")
+                        f"{to.stem}-{int(time.monotonic())}"
+                    )
                     logger.info(f"{path} already exists writing to {new_path}")
                     to = new_path
-                with open(to.with_suffix('.json'), 'w', encoding='utf-8') as fp:
+                with open(
+                    to.with_suffix(".json"), "w", encoding="utf-8"
+                ) as fp:
                     json.dump(res, fp, default=encode_datetime)
                     logger.info(f"Results written to {to}")
             except TypeError as e:
                 logger.error("Could not encode json", e)
             return res
+
         return wrapper_save_output
+
     return decorator_save_output
 
 
@@ -184,7 +181,7 @@ def read_pdf(
                         lambda x: x.get(join_consecutive_on),
                         takewhile(
                             lambda x: count_empty(x) > rec_width // 2,
-                            records[index + 1:],
+                            records[index + 1 :],
                         ),
                     )
                     record[join_consecutive_on] += " " + " ".join(to_join)
@@ -206,7 +203,7 @@ def decrypt_pdf(data: BinaryIO, password: str | None) -> Path:
         reader.decrypt(password)
     for page in reader.pages:
         writer.add_page(page)
-    ofile = STATEMENTS_BASE_DIR / Path(uuid.hex).with_suffix('.pdf')
+    ofile = STATEMENTS_BASE_DIR / Path(uuid.hex).with_suffix(".pdf")
     with open(ofile, "wb") as fp:
         writer.write(fp)
     return ofile
