@@ -10,3 +10,7 @@ setup:
 
 tasks:
     rg --pretty --glob "!justfile" 'FIXME|TODO'
+
+lint:
+    isort src/
+    black src/
