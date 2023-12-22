@@ -20,19 +20,20 @@ litestar = {extras = ["pydantic"], version = "^2.4.4"}
 simplejson = "^3.19.2"
 sh = "^2.0.6"
 toolz = "^0.12.0"
-psycopg = {extras = ["binary"], version = "^3.1.15"}
 flask = "^3.0.0"
 flask-pydantic = "^0.11.0"
 python-dotenv = {extras = ["cli"], version = "^1.0.0"}
 structlog = "^23.2.0"
 pypdf = {extras = ["crypto"], version = "^3.17.3"}
+sqlalchemy = "^2.0.23"
+psycopg2 = "^2.9.9"
+psycopg = "^3.1.16"
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^8.14.0"
 Faker = "^19.2.0"
 icecream = "^2.1.3"
 tabulate = "^0.9.0"
-psycopg2 = "^2.9.6"
 thefuzz = {extras = ["speedup"], version = "^0.19.0"}
 iso3166 = "^2.1.1"
 better-exceptions = "^0.3.3"
