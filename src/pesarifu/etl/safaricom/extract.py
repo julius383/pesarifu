@@ -36,6 +36,7 @@ def get_transactions_from_pdf(path: Path) -> list[Dict[str, Any]]:
     return records
 
 
+@save_results("~/code/Python/pesarifu-dev/pesarifu/metadata")
 def get_metadata_from_pdf(path: Path) -> dict[str, Any]:
     "Extract user information from header in Mpesa statement"
     try:
