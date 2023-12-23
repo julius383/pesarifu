@@ -26,7 +26,7 @@ class Base(DeclarativeBase):
         for key, field in fields.items():
             try:
                 if field:
-                    field_strings.append(f"{key}={field}!r")
+                    field_strings.append(f"{key}={field!r}")
             except sqlalchemy.orm.exc.DetachedInstanceError:
                 field_strings.append(f"{key}=DetatchedInstanceError")
         return f"{self.__class__.__name__}({','.join(field_strings)})"
@@ -87,7 +87,7 @@ class User(Base):
         comment="Less guessable id to use in application",
     )
 
-    accounts: Mapped[list["TransactionalAccount"]] = relationship(
+    accounts: Mapped[Optional[list["TransactionalAccount"]]] = relationship(
         back_populates="holder"
     )
 
@@ -96,28 +96,9 @@ class User(Base):
             id=self.id,
             uuid=self.uuid,
             email=self.email,
-            created_at=datetime.fromtimestamp(self.created_at, timezone.utc),
+            # created_at=datetime.fromtimestamp(int(self.created_at), timezone.utc),
             accounts=self.accounts,
         )
-
-
-class WebReport(Base):
-    __tablename__ = "web_report"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    created_at: Mapped[float] = mapped_column(default=time.time)
-    expires_after: Mapped[timedelta] = mapped_column(
-        default=partial(timedelta, days=7),
-        comment="How long a web report should stay live",
-    )
-    expired: Mapped[bool] = mapped_column(default=False)
-    web_url: Mapped[str] = mapped_column(
-        String(150), comment="URL for web report", unique=True
-    )
-
-    account: Mapped["TransactionalAccount"] = relationship(
-        back_populates="web_report"
-    )
 
 
 # TODO: define default subscription plans
@@ -146,6 +127,10 @@ class Provider(Base):
     )
     organization_type: Mapped[OrgType] = mapped_column(default=OrgType.TELCO)
 
+    accounts: Mapped[list["TransactionalAccount"]] = relationship(
+        back_populates="provider"
+    )
+
     def __repr__(self):
         return self._repr(
             id=self.id,
@@ -154,18 +139,51 @@ class Provider(Base):
         )
 
 
+class WebReport(Base):
+    __tablename__ = "web_report"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    created_at: Mapped[float] = mapped_column(default=time.time)
+    expires_after: Mapped[timedelta] = mapped_column(
+        default=partial(timedelta, days=7),
+        comment="How long a web report should stay live",
+    )
+    expired: Mapped[bool] = mapped_column(default=False)
+    web_url: Mapped[str] = mapped_column(
+        String(150), comment="URL for web report", unique=True
+    )
+
+    account_id: Mapped[int] = mapped_column(
+        ForeignKey("transactional_account.id")
+    )
+    account: Mapped["TransactionalAccount"] = relationship(
+        back_populates="web_report"
+    )
+
+
 class TransactionalAccount(Base):
     __tablename__ = "transactional_account"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    # TODO: add unique constraint of account_name and provider_id
     account_name: Mapped[str] = mapped_column(
         String(500),
         comment="Name associated with this account for example Facebook .inc or John Smith.",
     )
-    provider_id: Mapped[int] = mapped_column(ForeignKey("account_provider.id"))
-    holder_id: Mapped[int] = mapped_column(ForeignKey("user_account.id"))
+    type: Mapped[str]
 
+    __mapper_args__ = {
+        "polymorphic_identity": "transactional_account",
+        "polymorphic_on": "type",
+    }
+    provider_id: Mapped[int] = mapped_column(ForeignKey("account_provider.id"))
+    provider: Mapped["Provider"] = relationship(back_populates="accounts")
+
+    holder_id: Mapped[int] = mapped_column(
+        ForeignKey("user_account.id"), nullable=True
+    )
     holder: Mapped["User"] = relationship(back_populates="accounts")
+
     web_report: Mapped["WebReport"] = relationship(back_populates="account")
     balance: Mapped[Optional[Decimal]] = mapped_column(
         comment="Balance of account at last_checked"
@@ -181,7 +199,7 @@ class TransactionalAccount(Base):
         )
 
 
-class BankAccount(Base):
+class BankAccount(TransactionalAccount):
     __tablename__ = "bank_account"
 
     account_id: Mapped[int] = mapped_column(
@@ -193,6 +211,10 @@ class BankAccount(Base):
     # TODO: figure out whether adding BIC/SWIFT code is necessary
     identifier: Mapped[str] = mapped_column(String(100))
 
+    __mapper_args__ = {
+        "polymorphic_identity": "bank_account",
+    }
+
     def __repr__(self):
         return self._repr(
             account_id=self.account_id,
@@ -200,7 +222,7 @@ class BankAccount(Base):
         )
 
 
-class SafaricomPaybillAccount(Base):
+class SafaricomPaybillAccount(TransactionalAccount):
     __tablename__ = "safaricom_paybill_account"
 
     account_id: Mapped[int] = mapped_column(
@@ -212,6 +234,9 @@ class SafaricomPaybillAccount(Base):
         unique=True,
         comment="May not always be present since sometimes organizations use them to partition accounts",
     )
+    __mapper_args__ = {
+        "polymorphic_identity": "safaricom_paybill_account",
+    }
 
     def __repr__(self):
         return self._repr(
@@ -221,13 +246,17 @@ class SafaricomPaybillAccount(Base):
         )
 
 
-class SafaricomBuygoodsAccount(Base):
+class SafaricomBuygoodsAccount(TransactionalAccount):
     __tablename__ = "safaricom_buygoods_account"
 
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id"), primary_key=True
     )
     buygoods_number: Mapped[str] = mapped_column(String(10), unique=True)
+
+    __mapper_args__ = {
+        "polymorphic_identity": "safaricom_buygoods_account",
+    }
 
     def __repr__(self):
         return self._repr(
@@ -236,7 +265,7 @@ class SafaricomBuygoodsAccount(Base):
         )
 
 
-class MobileMoneyAccount(Base):
+class MobileMoneyAccount(TransactionalAccount):
     __tablename__ = "mobile_money_account"
 
     account_id: Mapped[int] = mapped_column(
@@ -248,6 +277,10 @@ class MobileMoneyAccount(Base):
         comment="May be obfuscated. Use phone_number for usable number",
     )  # may be obfuscated e.g +254714***460
     phone_number: Mapped[Optional[str]] = mapped_column(String(30))
+
+    __mapper_args__ = {
+        "polymorphic_identity": "mobile_money_account",
+    }
 
     def __repr__(self):
         return self._repr(
@@ -273,6 +306,9 @@ class Transaction(Base):
     original_detail: Mapped[Optional[str]] = mapped_column(
         String(500),
         comment="Original text that was part of transaction message.",
+    )
+    extra: Mapped[Optional[dict[str, Any]]] = mapped_column(
+        comment="Any extra information we may want to keep as JSON"
     )
 
     def __repr__(self):
