@@ -1,17 +1,17 @@
 import datetime
 import functools
+import json
 import logging
 import math
 import re
 import time
-from decimal import Decimal
+from datetime import timezone
 from itertools import takewhile
 from pathlib import Path
 from typing import Any, BinaryIO, Dict, List, Optional
 from uuid import uuid4
 
 import pandas as pd
-import simplejson as json
 import structlog
 import tabula
 from dotenv import dotenv_values, find_dotenv
@@ -19,6 +19,7 @@ from pypdf import PdfReader, PdfWriter
 
 # from icecream import ic
 from thefuzz import fuzz
+from toolz import keyfilter
 
 ROOT_DIR: Path = Path(find_dotenv(".env")).absolute().parent
 STATEMENTS_BASE_DIR = ROOT_DIR / "statements"
@@ -51,8 +52,19 @@ def configure_logger():
 logger = configure_logger()
 
 
+class CustEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime.datetime):
+            return o.replace(tzinfo=timezone.utc).timestamp()
+        return json.JSONEncoder.default(self, o)
+
+
 class ParseError(Exception):
     """Error raised when some input can't be parsed into the expected object"""
+
+
+def pick(whitelist, d):
+    return keyfilter(lambda k: k in whitelist, d)
 
 
 def encode_datetime(obj):
@@ -69,15 +81,15 @@ def normalize_key(key: Any) -> str:
     )
 
 
-def convert_to_cash(v: str | float | Decimal) -> Decimal:
-    if isinstance(v, Decimal):
+def convert_to_cash(v: str | float) -> float:
+    if isinstance(v, float):
         return v
-    if isinstance(v, (float, int)):
-        return Decimal(v)
+    if isinstance(v, int):
+        return float(v)
     if isinstance(v, str):
         cleaned = re.sub(r"\s|[^0-9.-]", "", v)
-        return Decimal(cleaned)
-    msg = f"Unable to convert {v} of type {type(v)} to Decimal"
+        return float(cleaned)
+    msg = f"Unable to convert {v} of type {type(v)} to float"
     logger.error(msg)
     raise ValueError(msg)
 
@@ -111,7 +123,7 @@ def save_results(path: str):
                 with open(
                     to.with_suffix(".json"), "w", encoding="utf-8"
                 ) as fp:
-                    json.dump(res, fp, default=encode_datetime)
+                    json.dump(res, fp)
                     logger.info(f"Results written to {to}")
             except TypeError as e:
                 logger.error("Could not encode json", e)
