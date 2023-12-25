@@ -1,24 +1,17 @@
 import re
-from datetime import datetime
-from decimal import Decimal
+from datetime import datetime, timezone
 from enum import Enum, auto
-from functools import partial
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 from dateutil.parser import isoparse
-from icecream import ic
-from toolz import compose_left, pipe
 
-from pesarifu.util.helpers import (
-    ParseError,
-    convert_to_cash,
-    normalize_key,
-    save_results,
-)
+# from icecream import ic
+from toolz import pipe
+
+from pesarifu.util.helpers import ParseError, convert_to_cash, logger
 
 # TODO: write export for excel, csv and jsonl
 # TODO: align fields in JSON and PDF extract
-# TODO: use models from models.py
 
 
 class TransactionTypes(Enum):
@@ -29,6 +22,7 @@ class TransactionTypes(Enum):
 
 
 # @save_results("~/code/Python/pesarifu-dev/pesarifu/details-parse")
+# FIXME: handle Pay Utility Reversal by Lipa na KCB KCBAPIINITIATOR1
 def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
     details = details.strip()
     details = re.sub(r"\s+|\\", " ", details)
@@ -37,14 +31,21 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
         (
             TransactionTypes.MOBILE_TRANSFER,
             re.compile(
-                r"Customer Transfer to (?P<maybe_number>[*0-9]{12}) - (?P<account_name>.*)$",
+                r"Customer Transfer to (?P<maybe_number>[*0-9]{10,12}) - (?P<account_name>.*)$",
                 re_flags,
             ),
         ),
         (
             TransactionTypes.MOBILE_TRANSFER,
             re.compile(
-                r"Funds received from (?P<maybe_number>[*0-9]{12}) - (?P<account_name>.*)$",
+                r"Funds received from (?P<maybe_number>[*0-9]{10,12}) - (?P<account_name>.*)$",
+                re_flags,
+            ),
+        ),
+        (
+            TransactionTypes.MOBILE_TRANSFER,
+            re.compile(
+                r"Send Money Reversal via API to (?P<maybe_number>[*0-9]{10,12}) - (?P<account_name>.*)$",
                 re_flags,
             ),
         ),
@@ -58,7 +59,7 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
         (
             TransactionTypes.MOBILE_TRANSFER,
             re.compile(
-                r"Customer Payment to Small Business to (?P<maybe_number>[*0-9]{10}) - (?P<account_name>.*)$",
+                r"Customer Payment to Small Business to (?P<maybe_number>[*0-9]{10,12}) - (?P<account_name>.*)$",
                 re_flags,
             ),
         ),
@@ -84,7 +85,7 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
             return k, match.groupdict()
         if not re.search(r"[0-9]+", details):
             return (TransactionTypes.SAFARICOM_TRANSFER, {"extra": details})
-    raise ParseError
+    raise ParseError(details)
 
 
 def parse_date(date: str) -> float:
@@ -109,14 +110,6 @@ def parse_phone(number: str) -> str:
     raise ParseError(f"{number} does not match expected pattern {p}")
 
 
-def process_person_name(name: str) -> str:
-    return pipe(name, str.strip, str.title)
-
-
-def process_business_name(name: str) -> str:
-    return pipe(name, str.strip, str.title)
-
-
 def transform_pdf_record(record):
     transaction = {
         "transaction_reference": record["receipt_no"],
@@ -128,42 +121,52 @@ def transform_pdf_record(record):
             "balance_at": convert_to_cash(record["balance"]),
         },
     }
-    ttype, info = parse_details(record["details"])
-    # ic(ttype, info)
-    match ttype:
-        case TransactionTypes.MOBILE_TRANSFER:
-            info["maybe_number"] = pipe(
-                info["maybe_number"],
-                str.lower,
-                lambda x: re.sub(
-                    r"(?:^|\s)([a-zA-Z])", lambda x: str.upper(x.group(0)), x
-                ),  # Better Title Case than str.title
-                lambda x: re.sub(r"^0", "254", x),
-                lambda x: re.sub(r"^7", "2547", x),
-            )
-            # ic()
-            if not re.search(r"\*\*\*", info["maybe_number"]):
-                info["phone_number"] = info["maybe_number"]
-            if re.search(
-                r"small business",
-                transaction["original_detail"],
-                flags=re.IGNORECASE,
-            ):
-                transaction["extra"]["pochi_la_biashara"] = True
-            info["account_name"] = pipe(
-                info["account_name"], str.strip, str.title
-            )
-        case TransactionTypes.BUYGOODS_TRANSFER | TransactionTypes.PAYBILL_TRANSFER:
-            # ic()
-            info["account_name"] = pipe(info["account_name"], str.strip)
-    # ic()
+    try:
+        ttype, info = parse_details(record["details"])
+        transaction["initiated_at"] = (
+            transaction["initiated_at"]
+            .replace(tzinfo=timezone.utc)
+            .timestamp()
+        )
+        match ttype:
+            case TransactionTypes.MOBILE_TRANSFER:
+                info["maybe_number"] = pipe(
+                    info["maybe_number"],
+                    str.lower,
+                    lambda x: re.sub(
+                        r"(?:^|\s)([a-zA-Z])",
+                        lambda x: str.upper(x.group(0)),
+                        x,
+                    ),  # Better Title Case than str.title
+                    lambda x: re.sub(r"^0", "254", x),
+                    lambda x: re.sub(r"^7", "2547", x),
+                )
+                if not re.search(r"\*\*\*", info["maybe_number"]):
+                    info["phone_number"] = info["maybe_number"]
+                if re.search(
+                    r"small business",
+                    transaction["original_detail"],
+                    flags=re.IGNORECASE,
+                ):
+                    transaction["extra"]["pochi_la_biashara"] = True
+                info["account_name"] = pipe(
+                    info["account_name"], str.strip, str.title
+                )
+            case TransactionTypes.BUYGOODS_TRANSFER | TransactionTypes.PAYBILL_TRANSFER:
+                info["account_name"] = pipe(info["account_name"], str.strip)
+            # FIXME: handle transactions to/from vendor
+            case TransactionTypes.SAFARICOM_TRANSFER:
+                return
+    except ParseError as e:
+        logger.debug("Unable to parse record %s", record)
+        return
     transaction["other_account"] = info
     return transaction
 
 
 def transform_api_record(
     json_obj: Dict[str, str]
-) -> Optional[Dict[str, Decimal | str]]:
+) -> Optional[Dict[str, float | str]]:
     # if not set(
     #     [
     #         "TransactionType",

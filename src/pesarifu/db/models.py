@@ -1,6 +1,5 @@
 import time
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal
 from enum import Enum, auto
 from functools import partial
 from typing import Any, Optional
@@ -15,7 +14,7 @@ from sqlalchemy.types import ARRAY, DECIMAL, JSON, String
 # TODO: figure out migration
 # TODO: create indices and check constraints
 class Base(DeclarativeBase):
-    type_annotation_map = {dict[str, Any]: JSON, Decimal: DECIMAL}
+    type_annotation_map = {dict[str, Any]: JSON, float: DECIMAL}
 
     def __repr__(self) -> str:
         return self._repr(id=self.id)
@@ -56,7 +55,7 @@ class Currency(Base):
         )
 
 
-class User(Base):
+class UserAccount(Base):
     __tablename__ = "user_account"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -114,7 +113,7 @@ class SubscriptionPlan(Base):
         comment="For example basic, pro, enterprise",
     )
 
-    price: Mapped[Decimal]
+    price: Mapped[float]
 
 
 class Provider(Base):
@@ -182,10 +181,18 @@ class TransactionalAccount(Base):
     holder_id: Mapped[int] = mapped_column(
         ForeignKey("user_account.id"), nullable=True
     )
-    holder: Mapped["User"] = relationship(back_populates="accounts")
+    holder: Mapped["UserAccount"] = relationship(back_populates="accounts")
 
     web_report: Mapped["WebReport"] = relationship(back_populates="account")
-    balance: Mapped[Optional[Decimal]] = mapped_column(
+    owned_transactions: Mapped[list["Transaction"]] = relationship(
+        back_populates="owner_account",
+        foreign_keys="Transaction.owner_account_id",
+    )
+    participating_transactions: Mapped[list["Transaction"]] = relationship(
+        back_populates="participant_account",
+        foreign_keys="Transaction.participant_account_id",
+    )
+    balance: Mapped[Optional[float]] = mapped_column(
         comment="Balance of account at last_checked"
     )
     last_checked: Mapped[Optional[float]] = mapped_column(onupdate=time.time)
@@ -265,14 +272,15 @@ class SafaricomBuygoodsAccount(TransactionalAccount):
         )
 
 
+# TODO: add unique constraint on account_name and maybe_number
 class MobileMoneyAccount(TransactionalAccount):
     __tablename__ = "mobile_money_account"
 
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id"), primary_key=True
     )
-    # TODO: add trigger to set phone_number if maybe_phone not obfuscated
-    maybe_phone: Mapped[str] = mapped_column(
+    # TODO: add trigger to set phone_number if maybe_number not obfuscated
+    maybe_number: Mapped[str] = mapped_column(
         String(30),
         comment="May be obfuscated. Use phone_number for usable number",
     )  # may be obfuscated e.g +254714***460
@@ -285,7 +293,7 @@ class MobileMoneyAccount(TransactionalAccount):
     def __repr__(self):
         return self._repr(
             account_id=self.account_id,
-            maybe_phone=self.maybe_phone,
+            maybe_number=self.maybe_number,
             phone_number=self.phone_number,
         )
 
@@ -294,11 +302,24 @@ class Transaction(Base):
     __tablename__ = "transaction"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    amount: Mapped[Decimal]
+    amount: Mapped[float]
     initiated_at: Mapped[float] = mapped_column(
         comment="When did this transaction happen"
     )
-    currency_id: Mapped[int] = mapped_column(ForeignKey("currency.id"))
+    owner_account_id: Mapped[int] = mapped_column(
+        ForeignKey("transactional_account.id")
+    )
+    owner_account: Mapped["TransactionalAccount"] = relationship(
+        back_populates="owned_transactions", foreign_keys=[owner_account_id]
+    )
+    participant_account_id: Mapped[int] = mapped_column(
+        ForeignKey("transactional_account.id")
+    )
+    participant_account: Mapped["TransactionalAccount"] = relationship(
+        back_populates="participating_transactions",
+        foreign_keys=[participant_account_id],
+    )
+    # currency_id: Mapped[int] = mapped_column(ForeignKey("currency.id"))
     purpose: Mapped[Optional[str]]
     transaction_reference: Mapped[Optional[str]] = mapped_column(
         String(50), comment="Reference given along with transaction"
@@ -315,7 +336,7 @@ class Transaction(Base):
         return self._repr(
             id=self.id,
             amount=self.amount,
-            currency=self.currency_id,
+            # currency=self.currency_id,
             transaction_reference=self.transaction_reference,
         )
 

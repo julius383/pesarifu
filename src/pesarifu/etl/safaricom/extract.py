@@ -8,7 +8,7 @@ from pesarifu.etl.safaricom.transform import parse_date, parse_phone
 from pesarifu.util.helpers import normalize_key, read_pdf, save_results
 
 
-@save_results("~/code/Python/pesarifu-dev/pesarifu/transactions")
+# @save_results("~/code/Python/pesarifu-dev/pesarifu/transactions")
 def get_transactions_from_pdf(path: Path) -> list[Dict[str, Any]]:
     columns = [
         36,
@@ -36,7 +36,8 @@ def get_transactions_from_pdf(path: Path) -> list[Dict[str, Any]]:
     return records
 
 
-@save_results("~/code/Python/pesarifu-dev/pesarifu/metadata")
+# @save_results("~/code/Python/pesarifu-dev/pesarifu/metadata")
+# TODO: cache results of this function
 def get_metadata_from_pdf(path: Path) -> dict[str, Any]:
     "Extract user information from header in Mpesa statement"
     try:
