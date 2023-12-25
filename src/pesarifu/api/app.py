@@ -45,11 +45,21 @@ async def process_pdf(
     ]
 ) -> dict[str, Any]:
     try:
+        file_head = await data.target.read(4)
+        # TODO: add additional check for file size
+        if not file_head.startswith(
+            bytes([0x25, 0x50, 0x44, 0x46])
+        ):  # PDF magic number
+            logger.error("Non PDF file passed")
+            raise HTTPException(
+                detail="The submitted file is not a PDF", status_code=400
+            )
         pdf_path = decrypt_pdf(
-            io.BytesIO(await data.target.read()), data.pdf_password
+            io.BytesIO(file_head + await data.target.read()), data.pdf_password
         )
         logger.info("Saved pdf to %s", pdf_path)
         metadata = get_metadata_from_pdf(pdf_path)
+        metadata["email"] = data.sendto_email
         return metadata
     except ValueError as e:
         logger.error("Unable to parse PDF as type %s", data.source)
