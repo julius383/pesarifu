@@ -5,6 +5,7 @@ from sqlalchemy import select
 from pesarifu.db.models import (
     MobileMoneyAccount,
     Provider,
+    ProviderAccount,
     SafaricomBuygoodsAccount,
     SafaricomPaybillAccount,
     Transaction,
@@ -32,7 +33,21 @@ def get_or_create_user(session, fields):
 def get_or_create_account(session, obj, provider):
     if not isinstance(obj, dict):
         obj = obj.__dict__
-    if "maybe_number" in obj:
+    if "purpose" in obj:
+        acc = session.scalars(
+            select(ProviderAccount).where(
+                ProviderAccount.account_name == "Safaricom"
+            )
+        ).first()
+        if not acc:
+            acc = ProviderAccount(
+                account_name="Safaricom",
+                provider=provider,
+            )
+            session.add(acc)
+
+        return acc
+    elif "maybe_number" in obj:
         acc = session.scalars(
             select(MobileMoneyAccount)
             .where(MobileMoneyAccount.account_name == obj["account_name"])

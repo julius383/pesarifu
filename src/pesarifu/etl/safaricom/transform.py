@@ -77,14 +77,40 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
                 re_flags,
             ),
         ),
+        (
+            TransactionTypes.SAFARICOM_TRANSFER,
+            re.compile(
+                r"(?P<purpose>Pay Utility Reversal.*)",
+                re_flags,
+            ),
+        ),
+        (
+            TransactionTypes.SAFARICOM_TRANSFER,
+            re.compile(
+                r"(?P<purpose>Customer Transfer of Funds Charge)",
+                re_flags,
+            ),
+        ),
+        (
+            TransactionTypes.SAFARICOM_TRANSFER,
+            re.compile(
+                r"(?P<purpose>Airtime Purchase)",
+                re_flags,
+            ),
+        ),
+        (
+            TransactionTypes.SAFARICOM_TRANSFER,
+            re.compile(
+                r"(?P<purpose>Pay Bill Charge)",
+                re_flags,
+            ),
+        ),
     ]
 
     for k, v in patterns:
         match = re.match(v, details)
         if match:
             return k, match.groupdict()
-        if not re.search(r"[0-9]+", details):
-            return (TransactionTypes.SAFARICOM_TRANSFER, {"extra": details})
     raise ParseError(details)
 
 
@@ -154,9 +180,8 @@ def transform_pdf_record(record):
                 )
             case TransactionTypes.BUYGOODS_TRANSFER | TransactionTypes.PAYBILL_TRANSFER:
                 info["account_name"] = pipe(info["account_name"], str.strip)
-            # FIXME: handle transactions to/from vendor
             case TransactionTypes.SAFARICOM_TRANSFER:
-                return
+                transaction["purpose"] = info["purpose"]
     except ParseError as e:
         logger.debug("Unable to parse record %s", record)
         return

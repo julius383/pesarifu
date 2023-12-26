@@ -209,6 +209,10 @@ class TransactionalAccount(Base):
 class BankAccount(TransactionalAccount):
     __tablename__ = "bank_account"
 
+    __mapper_args__ = {
+        "polymorphic_identity": "bank_account",
+    }
+
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id"), primary_key=True
     )
@@ -218,10 +222,6 @@ class BankAccount(TransactionalAccount):
     # TODO: figure out whether adding BIC/SWIFT code is necessary
     identifier: Mapped[str] = mapped_column(String(100))
 
-    __mapper_args__ = {
-        "polymorphic_identity": "bank_account",
-    }
-
     def __repr__(self):
         return self._repr(
             account_id=self.account_id,
@@ -229,8 +229,24 @@ class BankAccount(TransactionalAccount):
         )
 
 
+# TODO: figure out if refactor of TransactionalAccount necessary
+class ProviderAccount(TransactionalAccount):
+    __tablename__ = "provider_account"
+
+    account_id: Mapped[int] = mapped_column(
+        ForeignKey("transactional_account.id"), primary_key=True
+    )
+    __mapper_args__ = {
+        "polymorphic_identity": "provider_account",
+    }
+
+
 class SafaricomPaybillAccount(TransactionalAccount):
     __tablename__ = "safaricom_paybill_account"
+
+    __mapper_args__ = {
+        "polymorphic_identity": "safaricom_paybill_account",
+    }
 
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id"), primary_key=True
@@ -241,9 +257,6 @@ class SafaricomPaybillAccount(TransactionalAccount):
         unique=True,
         comment="May not always be present since sometimes organizations use them to partition accounts",
     )
-    __mapper_args__ = {
-        "polymorphic_identity": "safaricom_paybill_account",
-    }
 
     def __repr__(self):
         return self._repr(
@@ -256,14 +269,14 @@ class SafaricomPaybillAccount(TransactionalAccount):
 class SafaricomBuygoodsAccount(TransactionalAccount):
     __tablename__ = "safaricom_buygoods_account"
 
+    __mapper_args__ = {
+        "polymorphic_identity": "safaricom_buygoods_account",
+    }
+
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id"), primary_key=True
     )
     buygoods_number: Mapped[str] = mapped_column(String(10), unique=True)
-
-    __mapper_args__ = {
-        "polymorphic_identity": "safaricom_buygoods_account",
-    }
 
     def __repr__(self):
         return self._repr(
@@ -276,6 +289,10 @@ class SafaricomBuygoodsAccount(TransactionalAccount):
 class MobileMoneyAccount(TransactionalAccount):
     __tablename__ = "mobile_money_account"
 
+    __mapper_args__ = {
+        "polymorphic_identity": "mobile_money_account",
+    }
+
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id"), primary_key=True
     )
@@ -285,10 +302,6 @@ class MobileMoneyAccount(TransactionalAccount):
         comment="May be obfuscated. Use phone_number for usable number",
     )  # may be obfuscated e.g +254714***460
     phone_number: Mapped[Optional[str]] = mapped_column(String(30))
-
-    __mapper_args__ = {
-        "polymorphic_identity": "mobile_money_account",
-    }
 
     def __repr__(self):
         return self._repr(
