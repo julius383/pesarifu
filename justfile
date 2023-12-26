@@ -9,7 +9,7 @@ setup:
     mkdir statements
 
 tasks:
-    rg --pretty --glob "!justfile" 'FIXME|TODO'
+    rg --pretty --max-depth 50 --glob '!justfile' 'FIXME|TODO'
 
 lint:
     isort src/
