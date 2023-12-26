@@ -14,7 +14,7 @@ from pesarifu.util.helpers import pick
 
 
 @db_connector
-def do(session, pdf_path, metadata):
+def go(session, pdf_path, metadata):
     uinfo = pick(["email"], metadata)
     uinfo["username"] = metadata["customer_name"]
     uinfo["phone_number"] = metadata["mobile_number"]
