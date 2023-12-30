@@ -15,6 +15,16 @@ from pesarifu.db.models import (
 from pesarifu.util.helpers import logger
 
 
+def get_user(session, email=None, id_=None):
+    if email:
+        q = select(UserAccount).where(UserAccount.email == email)
+    elif id_:
+        q = select(UserAccount).where(UserAccount.id == id_)
+    else:
+        return None
+    return session.scalars(q).first()
+
+
 def get_or_create_user(session, fields):
     obj = session.scalars(
         select(UserAccount).where(UserAccount.email == fields["email"])
@@ -117,18 +127,22 @@ def get_or_create_provider(session):
 
 def create_transaction(
     session,
-    for_account: TransactionalAccount
-    | SafaricomPaybillAccount
-    | SafaricomBuygoodsAccount
-    | MobileMoneyAccount,
+    account: TransactionalAccount | int,
     transaction: dict[str, Any],
 ):
-    print(transaction)
+    # print(transaction)
     other_account = transaction.pop("other_account")
     provider = get_or_create_provider(session)
+    if isinstance(account, int):
+        account = session.scalars(
+            select(TransactionalAccount).where(
+                TransactionalAccount.id == account
+            )
+        ).first()
     other = get_or_create_account(session, other_account, provider=provider)
     tx = Transaction(
-        **transaction, owner_account=for_account, participant_account=other
+        **transaction, owner_account=account, participant_account=other
     )
     session.add(tx)
-    return tx
+    session.commit()
+    return tx.id

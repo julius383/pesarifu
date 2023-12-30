@@ -60,6 +60,7 @@ async def process_pdf(
         logger.info("Saved pdf to %s", pdf_path)
         metadata = get_metadata_from_pdf(pdf_path)
         metadata["email"] = data.sendto_email
+        # TODO: start celery tasks
         return metadata
     except ValueError as e:
         logger.error("Unable to parse PDF as type %s", data.source)

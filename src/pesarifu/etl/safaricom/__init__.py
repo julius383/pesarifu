@@ -10,16 +10,17 @@ from pesarifu.etl.safaricom.load import (
     get_or_create_user,
 )
 from pesarifu.etl.safaricom.transform import transform_pdf_record
-from pesarifu.util.helpers import pick
 
 
 @db_connector
+# TODO: convert to celery task
 def go(session, pdf_path, metadata):
-    uinfo = pick(["email"], metadata)
-    uinfo["username"] = metadata["customer_name"]
-    uinfo["phone_number"] = metadata["mobile_number"]
+    uinfo = {
+        "email": metadata["email"],
+        "username": metadata["customer_name"],
+        "phone_number": metadata["mobile_number"],
+    }
     user = get_or_create_user(session, uinfo)
-
     provider = get_or_create_provider(session)
 
     mobile_obj = {
