@@ -3,7 +3,7 @@ from functools import wraps
 import sqlalchemy
 from dotenv import dotenv_values
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker
 
 from pesarifu.util.helpers import logger
 
@@ -13,6 +13,7 @@ if config.get("PROD", False):
     db_url = config["DB_URL"]
 
 engine = create_engine(db_url)
+Session = sessionmaker(engine)
 
 
 def db_connector(func):
@@ -28,7 +29,7 @@ def db_connector(func):
         ),
     )
     def with_connection_(*args, **kwargs):
-        session = Session(engine)
+        session = Session()
         try:
             rv = func(session, *args, **kwargs)
         except sqlalchemy.exc.SQLAlchemyError:

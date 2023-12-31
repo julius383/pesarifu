@@ -151,6 +151,7 @@ class WebReport(Base):
     web_url: Mapped[str] = mapped_column(
         String(150), comment="URL for web report", unique=True
     )
+    last_visit: Mapped[float] = mapped_column(default=time.time)
 
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id")

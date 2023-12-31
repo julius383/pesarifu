@@ -1,9 +1,6 @@
-from pathlib import Path
-
 from sqlalchemy.orm import Session
 
 from pesarifu.config.celery import app
-from pesarifu.db.util import db_connector
 from pesarifu.etl.safaricom.extract import (
     get_metadata_from_pdf,
     get_transactions_from_pdf,
