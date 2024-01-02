@@ -25,6 +25,14 @@ def get_user(session, email=None, id_=None):
     return session.scalars(q).first()
 
 
+def get_account(session, account_id):
+    return session.scalars(
+        select(TransactionalAccount).where(
+            TransactionalAccount.id == account_id
+        )
+    ).first()
+
+
 def get_or_create_user(session, fields):
     obj = session.scalars(
         select(UserAccount).where(UserAccount.email == fields["email"])
@@ -133,12 +141,6 @@ def create_transaction(
     # print(transaction)
     other_account = transaction.pop("other_account")
     provider = get_or_create_provider(session)
-    if isinstance(account, int):
-        account = session.scalars(
-            select(TransactionalAccount).where(
-                TransactionalAccount.id == account
-            )
-        ).first()
     other = get_or_create_account(session, other_account, provider=provider)
     tx = Transaction(
         **transaction, owner_account=account, participant_account=other

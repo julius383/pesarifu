@@ -10,6 +10,7 @@ from litestar.exceptions import HTTPException
 from litestar.params import Body
 from pydantic import BaseModel, ConfigDict
 
+from pesarifu.etl import safaricom
 from pesarifu.etl.safaricom.extract import get_metadata_from_pdf
 from pesarifu.util.helpers import decrypt_pdf, logger
 
@@ -36,7 +37,6 @@ async def callback_register():
     return
 
 
-# TODO: pass task to celery (delete or process) pdf
 # TODO: add logic to handle PDFs from multiple sources safaricom, stanchart etc
 @post("/process-pdf")
 async def process_pdf(
@@ -60,7 +60,11 @@ async def process_pdf(
         logger.info("Saved pdf to %s", pdf_path)
         metadata = get_metadata_from_pdf(pdf_path)
         metadata["email"] = data.sendto_email
-        # TODO: start celery tasks
+        if data.source == "mpesa_full_statement":
+            logger.info("Dispatching Task")
+            safaricom.go(pdf_path=str(pdf_path.absolute()), metadata=metadata)
+        else:
+            raise NotImplementedError
         return metadata
     except ValueError as e:
         logger.error("Unable to parse PDF as type %s", data.source)
@@ -74,4 +78,4 @@ async def process_pdf(
         ) from e
 
 
-app = Litestar(route_handlers=[hello_world, process_pdf])
+app = Litestar(route_handlers=[process_pdf])
