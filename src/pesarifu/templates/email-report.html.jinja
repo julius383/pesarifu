@@ -1,0 +1,28 @@
+Hi, thanks for using <a href="https://pesarifu.com">Pesarifu</a> you can view your report at <a href="{{ report_link }}">this</a> link.
+
+{% if files is defined %}
+
+Also attatched you can find:
+<ul>
+    {% for ext, file in files.items() %}
+    <li>
+    {% if ext == ".pdf" -%}
+        A PDF version of your report.
+    {% elif ext == ".csv" %}
+        A CSV data export.
+    {% elif ext == ".xlsx" %}
+        A Excel Sheet data export.
+    {% elif ext == ".json" %}
+        A JSON data export.
+    {% elif ext == ".jsonl" %}
+        A JSONL data export.
+    {% else %}
+        A Data export.
+    {%- endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+Regards, <br>
+Julius @ Pesarifu

@@ -133,7 +133,9 @@ examples/
 
 *.vim
 
-statements/
+exports/
+uploads/
+scratch.py
 
 *.json
 

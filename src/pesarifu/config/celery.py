@@ -1,15 +1,15 @@
 from celery import Celery
-from dotenv import dotenv_values
 
-config = dotenv_values()
-broker = config["CELERY_BROKER_URL"]
-backend = config["CELERY_RESULTS_BACKEND"]
+from pesarifu.config.constants import CONFIG
+
+broker = CONFIG["CELERY_BROKER_URL"]
+backend = CONFIG["CELERY_RESULTS_BACKEND"]
 
 app = Celery(
     "pesarifu_tasks",
     broker=broker,
     backend=backend,
-    include=["pesarifu.etl.safaricom.tasks"],
+    include=["pesarifu.etl.safaricom", "pesarifu.util.tasks"],
 )
 app.conf.update(
     result_expires=3600,

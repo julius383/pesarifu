@@ -25,12 +25,22 @@ def notify_admin(subject, body):
     return
 
 
+def notify_local(subject, body):
+    title = f"Update on pesarifu regarding: {subject}"
+    apobj.notify(
+        title=title,
+        body=body,
+        tag="admin-local",
+        body_format=NotifyFormat.MARKDOWN,
+    )
+
+
 def build_email(subject, body, from_, sendto, attachments):
     message = MIMEMultipart()
     message["From"] = from_
     message["To"] = sendto
     message["Subject"] = subject
-    message.attach(MIMEText(body, "plain"))
+    message.attach(MIMEText(body, "html"))
     if attachments:
         for path in attachments:
             path = Path(path) if isinstance(path, str) else path
