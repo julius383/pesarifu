@@ -23,6 +23,7 @@ from toolz import keyfilter
 
 ROOT_DIR: Path = Path(find_dotenv(".env")).absolute().parent
 STATEMENTS_BASE_DIR = ROOT_DIR / "statements"
+EXPORTS_BASE_DIR = ROOT_DIR / "exports"
 CONFIG: dict[str, str | None] = dotenv_values(".env")
 
 
