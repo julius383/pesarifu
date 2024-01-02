@@ -14,17 +14,13 @@ from uuid import uuid4
 import pandas as pd
 import structlog
 import tabula
-from dotenv import dotenv_values, find_dotenv
 from pypdf import PdfReader, PdfWriter
 
 # from icecream import ic
 from thefuzz import fuzz
 from toolz import keyfilter
 
-ROOT_DIR: Path = Path(find_dotenv(".env")).absolute().parent
-STATEMENTS_BASE_DIR = ROOT_DIR / "statements"
-EXPORTS_BASE_DIR = ROOT_DIR / "exports"
-CONFIG: dict[str, str | None] = dotenv_values(".env")
+from pesarifu.config.constants import CONFIG, STATEMENTS_BASE_DIR
 
 
 def configure_logger():
