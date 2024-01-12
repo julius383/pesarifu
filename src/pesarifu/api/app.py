@@ -1,20 +1,28 @@
 from __future__ import annotations
 
 import io
+from pathlib import Path
 from typing import Annotated, Any, Optional
 
 from litestar import Litestar, get, post
+from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.datastructures import UploadFile
 from litestar.enums import RequestEncodingType
 from litestar.exceptions import HTTPException
 from litestar.params import Body
+from litestar.response import Template
+from litestar.static_files.config import StaticFilesConfig
+from litestar.template.config import TemplateConfig
 from pydantic import BaseModel, ConfigDict
 
+from pesarifu.config.constants import APP_BASE_URL
 from pesarifu.etl import safaricom
 from pesarifu.etl.safaricom.extract import get_metadata_from_pdf
 from pesarifu.util.helpers import decrypt_pdf, logger
 
 # from icecream import ic
+
+# TODO: add security middleware and rate limiting
 
 
 class ProcessItem(BaseModel):
@@ -27,8 +35,10 @@ class ProcessItem(BaseModel):
 
 
 @get("/")
-async def hello_world() -> str:
-    return "Hello, world!"
+async def index() -> Template:
+    context = {}
+    context["api_url"] = APP_BASE_URL
+    return Template(template_name="index.html", context=context)
 
 
 # TODO: add logic to include user id
@@ -78,4 +88,13 @@ async def process_pdf(
         ) from e
 
 
-app = Litestar(route_handlers=[process_pdf])
+app = Litestar(
+    route_handlers=[index, process_pdf],
+    template_config=TemplateConfig(
+        directory=Path(__file__).parent.parent / "templates",
+        engine=JinjaTemplateEngine,
+    ),
+    static_files_config=[
+        StaticFilesConfig(directories=["static/dist"], path="/dist")
+    ],
+)

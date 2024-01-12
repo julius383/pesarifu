@@ -1,14 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Pesarifu</title>
+    <meta name="generator" content=
+    "HTML Tidy for HTML5 for Linux version 5.7.45">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="dist/css/output.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href=
+    "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+    rel="stylesheet">
+    <title>
+      Pesarifu App
+    </title>
+    <style>
+    body {
+        font-family: "Poppins", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+    </style>
   </head>
   <body>
-    <form action="/api">
-      <label for="pdfInput"
-      <input type="file" id="pdfInput" name="pdfinput">
-      <input type="checkbox" class="exportOptions" checked>
-      <input type="checkbox" class="exportOptions" checked>
-    </form>
+    <div class=
+    "h-full container mx-auto px-4 flex  flex-col items-center justify-center min-w-90">
+      <h1 class="text-xl my-5">
+        Pesarifu
+      </h1>
+      <div class="my-4 w-full">
+        <div class="flex flex-col gap-4 mx-auto justify-center items-center">
+          <form class="w-8/12 mx-auto" action="/process-pdf" method="post" enctype="multipart/form-data">
+            <label class=
+            "block mb-2 text-sm font-medium text-gray-900 dark:text-white" for=
+            "user_avatar">Upload file</label>
+            <input class=
+            "block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+            aria-describedby="user_avatar_help" name="target" id="pdf_target" type="file" accept="application/pdf" required>
+            <div class="mt-1 text-sm text-gray-500" id="pdf_target_help">
+              M-Pesa PDF Statement
+            </div>
+            <label for="password" class=
+            "block mb-2 text-sm font-medium text-gray-900">PDF password</label>
+            <input type="password" id="password" name="pdf_password"
+            aria-describedby="helper-text-explanation" class=
+            "bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+            <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500">
+              Password of the PDF if it has one
+            </p>
+            <label for="email" class=
+            "block mb-2 text-sm font-medium text-gray-900">Your email</label>
+            <input type="email" id="email" required name="sendto_email" autocomplete="on"
+            aria-describedby= "helper-text-explanation" class=
+            "bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+            placeholder="name@example.org">
+            <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500">
+              Where you want you report sent
+            </p>
+            <input type="hidden" name="source" value="mpesa-full-statement">
+          <fieldset>
+            <div class="flex items-center my-2">
+              <input id="checkbox-2" type="checkbox" value="" class=
+              "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+              <label for="checkbox-2" class=
+              "ms-2 text-sm font-medium text-gray-900">I want to receive
+              updates about Pesarifu</label>
+            </div>
+          </fieldset>
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+          </form>
+        </div>
+      </div>
+      <div id="accordion-collapse" class="w-10/12" data-accordion="collapse">
+        <h2 id="accordion-collapse-heading-1">
+          <button type="button" class=
+          "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 hover:bg-gray-100 gap-3"
+          data-accordion-target="#accordion-collapse-body-1" aria-expanded=
+          "true" aria-controls="accordion-collapse-body-1"><span>What is
+          Pesarifu?</span> <svg data-accordion-icon="" class=
+          "w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns=
+          "http://www.w3.org/2000/svg" fill="none" viewbox="0 0 10 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin=
+          "round" stroke-width="2" d="M9 5 5 1 1 5"></path></svg></button>
+        </h2>
+        <div id="accordion-collapse-body-1" class="hidden" aria-labelledby=
+        "accordion-collapse-heading-1">
+          <div class="p-5 border border-b-0 border-gray-200">
+            <p class="mb-2 text-gray-500">
+              Pesarifu is an application that provides transparency to
+              you Mobile Money through tailor made analytical reports.
+            </p>
+          </div>
+        </div>
+        <h2 id="accordion-collapse-heading-2">
+          <button type="button" class=
+          "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 focus:ring-4 focus:ring-gray-200 hover:bg-gray-100 gap-3"
+          data-accordion-target="#accordion-collapse-body-2" aria-expanded=
+          "false" aria-controls="accordion-collapse-body-2"><span>How does it
+          work?</span> <svg data-accordion-icon="" class=
+          "w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns=
+          "http://www.w3.org/2000/svg" fill="none" viewbox="0 0 10 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin=
+          "round" stroke-width="2" d="M9 5 5 1 1 5"></path></svg></button>
+        </h2>
+        <div id="accordion-collapse-body-2" class="hidden" aria-labelledby=
+        "accordion-collapse-heading-2">
+          <div class="p-5 border border-b-0 border-gray-200">
+            <p class="mb-2 text-gray-500">
+              Pesarifu works by using data extracted from your MPesa statements
+              to build your report. To use it you need to follow the
+              following steps:
+            </p>
+            <ol class="mb-2 text-gray-500 list-decimal list-inside">
+              <li>Generate your MPesa statements using one of the <a href=
+              "#accordion-collapse-heading-3" class="text-blue-600">available methods</a>
+              </li>
+              <li>Submit the generated statement, the PDF password if it has one and
+              the email you want your report to be sent to
+              </li>
+              <li>Open your email and open the e-mail from the Pesarifu Reports sender
+              </li>
+              <li>Navigate to the generated report
+              </li>
+              <li>Use the report to inform you decision making!
+              </li>
+            </ol>
+          </div>
+        </div>
+        <h2 id="accordion-collapse-heading-3">
+          <button type="button" class=
+          "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 hover:bg-gray-100 gap-3"
+          data-accordion-target="#accordion-collapse-body-3" aria-expanded=
+          "false" aria-controls="accordion-collapse-body-3"><span>How to
+          Generate MPesa Statements</span> <svg data-accordion-icon="" class=
+          "w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns=
+          "http://www.w3.org/2000/svg" fill="none" viewbox="0 0 10 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin=
+          "round" stroke-width="2" d="M9 5 5 1 1 5"></path></svg></button>
+        </h2>
+        <div id="accordion-collapse-body-3" class="hidden" aria-labelledby=
+        "accordion-collapse-heading-3">
+          <div class="p-5 border border-t-0 border-gray-200">
+            <p class="mb-2 text-gray-500">
+              There are two ways to generate the M-Pesa statement for your number:
+            </p>
+            <p>
+              Via M-PESA App:
+            </p>
+            <ol class="mb-2 text-gray-500 list-decimal list-inside">
+              <li>Log in to the M-PESA App by entering your M-PESA pin
+              </li>
+              <li>On the home page, Select M-PESA Statements
+              </li>
+              <li>Select the Month
+              </li>
+              <li>Select Export Statements and choose a date to export
+              transactions for
+              </li>
+              <li>Select Generate Statements and proceeed with step 2 of using
+              Pesarifu
+              </li>
+            </ol>
+            <br>
+            <p>
+              Via <b>*334#</b> menu:
+            </p>
+            <ol class="mb-2 text-gray-500 list-decimal list-inside">
+              <li>Open the phone or dialer app on your phone and dial
+                <pre>*334#</pre>
+              </li>
+              <li>Select <em>My Account</em> (option 7)
+              </li>
+              <li>Select M-Pesa Statement (option 3) then M-Pesa Statement
+              again in the next menu (Option 1)
+              </li>
+              <li>Select <em>Request Statement</em>
+              </li>
+              <li>Select <em>Full Statement</em>
+              </li>
+              <li>Choose one of the options for the period
+              </li>
+              <li>Enter an e-mail address to receive the statement
+              </li>
+              <li>Once you receive the statement and a message with the
+              password, proceed to step 2 of using Pesarifu
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src=
+    "https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
   </body>
 </html>

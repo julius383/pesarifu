@@ -28,3 +28,9 @@ tasks:
 lint:
     isort src/
     black src/
+
+build-styles:
+    npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css
+
+website-serve: build-styles api-run
+    echo "serving website"
