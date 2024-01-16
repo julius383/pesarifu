@@ -140,3 +140,4 @@ scratch.py
 *.json
 
 .envrc
+static/dist

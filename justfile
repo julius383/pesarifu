@@ -1,9 +1,11 @@
 #!/usr/bin/env -S just --working-directory . --justfile
 
 api-run:
+    # sudo systemctl start postgresql.service
     litestar --app pesarifu.api.app:app run --reload
 
 celery-run:
+    # sudo systemctl start redis.service
     celery --app pesarifu.config.celery worker --loglevel INFO --pool=prefork --concurrency=4
 
 clean: backup

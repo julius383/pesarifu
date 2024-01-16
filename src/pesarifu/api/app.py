@@ -31,7 +31,7 @@ class ProcessItem(BaseModel):
     sendto_email: str
     pdf_password: Optional[str] = None
     target: UploadFile
-    source: str = "mpesa_full_statement"
+    source: str = "mpesa-full-statement"
 
 
 @get("/")
@@ -70,7 +70,7 @@ async def process_pdf(
         logger.info("Saved pdf to %s", pdf_path)
         metadata = get_metadata_from_pdf(pdf_path)
         metadata["email"] = data.sendto_email
-        if data.source == "mpesa_full_statement":
+        if data.source == "mpesa-full-statement":
             logger.info("Dispatching Task")
             safaricom.go(pdf_path=str(pdf_path.absolute()), metadata=metadata)
         else:
