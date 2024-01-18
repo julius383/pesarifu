@@ -10,7 +10,6 @@ from toolz import pipe
 
 from pesarifu.util.helpers import ParseError, convert_to_cash, logger
 
-# TODO: write export for excel, csv and jsonl
 # TODO: align fields in JSON and PDF extract
 
 
@@ -66,14 +65,14 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
         (
             TransactionTypes.PAYBILL_TRANSFER,
             re.compile(
-                r"Pay Bill Online to (?P<paybill_number>[0-9]{6,8}) - (?P<account_name>(?:\w+\s+)+)Acc\.\s+(?P<account_number>\w+)$",
+                r"Pay Bill Online to (?P<paybill_number>[0-9]{6,8}) - (?P<account_name>(?:.+\s+)+)Acc\.\s+(?P<account_number>.+)$",
                 re_flags,
             ),
         ),
         (
             TransactionTypes.BUYGOODS_TRANSFER,
             re.compile(
-                r"(?:Business|Salary) Payment from (?P<buygoods_number>[0-9]{6,8}) - (?P<account_name>(?:\w+\s+)+)via (?P<detail>.*).$",
+                r"(?:Business|Salary) Payment from (?P<buygoods_number>[0-9]{6,8}) - (?P<account_name>(?:.+\s+)+)via (?P<detail>.*).$",
                 re_flags,
             ),
         ),
@@ -183,7 +182,7 @@ def transform_pdf_record(record):
             case TransactionTypes.SAFARICOM_TRANSFER:
                 transaction["purpose"] = info["purpose"]
     except ParseError as e:
-        logger.debug("Unable to parse record %s", record)
+        logger.warning("Unable to parse record %s", record)
         return
     transaction["other_account"] = info
     return transaction
