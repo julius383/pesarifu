@@ -1,5 +1,5 @@
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 from enum import Enum, auto
 from functools import partial
 from typing import Any, Optional
@@ -28,7 +28,14 @@ class Base(DeclarativeBase):
                     field_strings.append(f"{key}={field!r}")
             except sqlalchemy.orm.exc.DetachedInstanceError:
                 field_strings.append(f"{key}=DetatchedInstanceError")
-        return f"{self.__class__.__name__}({','.join(field_strings)})"
+        return f"{self.__class__.__name__}({', '.join(field_strings)})"
+
+    def as_dict(self):
+        return {
+            c.name: str(getattr(self, c.name))
+            for c in self.__table__.columns
+            if getattr(self, c.name) is not None
+        }
 
 
 class OrgType(Enum):
@@ -138,6 +145,7 @@ class Provider(Base):
         )
 
 
+# TODO: temporarily add way to keep track of PDFs
 class WebReport(Base):
     __tablename__ = "web_report"
 
@@ -350,7 +358,7 @@ class Transaction(Base):
         return self._repr(
             id=self.id,
             amount=self.amount,
-            # currency=self.currency_id,
+            initiated_at=self.initiated_at,
             transaction_reference=self.transaction_reference,
         )
 
