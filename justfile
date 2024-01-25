@@ -22,7 +22,7 @@ setup:
     mkdir uploads exports
 
 overview:
-    eza --hyperlink --tree --long --group-directories-first --ignore-glob __pycache__ --git-ignore
+    eza --hyperlink --tree --long --group-directories-first --ignore-glob __pycache__ --ignore-glob node_modules --git-ignore
 
 tasks:
     rg --pretty --max-depth 50 --glob '!justfile' 'FIXME|TODO'
@@ -36,3 +36,6 @@ build-styles:
 
 website-serve: build-styles api-run
     echo "serving website"
+
+reports-serve:
+    cd src/reports && npm run dev

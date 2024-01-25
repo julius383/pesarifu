@@ -141,3 +141,5 @@ scratch.py
 
 .envrc
 static/dist
+node_modules
+*_dump.sql
