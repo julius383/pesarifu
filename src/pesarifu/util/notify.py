@@ -14,7 +14,7 @@ from pesarifu.util.helpers import logger
 
 apobj = apprise.Apprise()
 apobj.add(f"tgram://{CONFIG['TELEGRAM_BOT_TOKEN']}/6081822266", tag="admin")
-apobj.add(f"dbus://", tag="admin-local")
+apobj.add("dbus://", tag="admin-local")
 
 
 def notify_admin(subject, body):
@@ -57,7 +57,7 @@ def build_email(subject, body, from_, sendto, attachments):
 
 
 def notify_user_email(subject, body, sendto, attatchments=None):
-    from_ = CONFIG["MAIL_USER"]
+    from_ = f"Pesarifu {CONFIG['MAIL_USER']}"
     text = build_email(subject, body, from_, sendto, attatchments)
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(
