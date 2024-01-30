@@ -1,0 +1,7 @@
+# This file was automatically generated
+name: pesarifu
+type: postgres
+options:
+  host: localhost
+  port: 5432
+  database: orion-test
