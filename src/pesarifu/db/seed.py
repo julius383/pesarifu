@@ -6,9 +6,11 @@ from operator import methodcaller
 
 from faker import Faker
 from icecream import ic
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from toolz import compose, concat
 
+from pesarifu.config.constants import CONFIG
 from pesarifu.db.models import (
     Base,
     MobileMoneyAccount,
@@ -22,6 +24,7 @@ from pesarifu.db.models import (
     UserAccount,
     WebReport,
 )
+from pesarifu.util.helpers import logger
 
 
 def create_tables(engine):
@@ -63,7 +66,7 @@ def fake_transactionalaccount(fake: Faker):
 
 def fake_mobilemoneyaccount(fake: Faker):
     return {
-        "account_name": fake.unique.company,
+        "account_name": fake.name,
         "maybe_number": partial(fake.numerify, "+254 7########"),
         "phone_number": "maybe_number",
     }
@@ -118,7 +121,8 @@ def fake_transaction(fake: Faker, credit_ratio=0.55):
         if random.random() < credit_ratio
         else amount_calc(),
         "initiated_at": compose(
-            methodcaller("timestamp"), fake.date_time_this_year
+            methodcaller("timestamp"),
+            partial(fake.date_time_between, start_date="-1y"),
         ),
         "original_detail": partial(fake.sentence, nb_words=7),
         "transaction_reference": compose(
@@ -156,6 +160,10 @@ def gen_fake_entry(
     Faker.seed(0)
     user = gen_fake(fake, UserAccount)
     provider = gen_fake(fake, Provider)
+    # ic(user)
+    session.add(user)
+    # ic(provider)
+    session.add(provider)
     account_types = [
         (MobileMoneyAccount, 0.5),
         (SafaricomBuygoodsAccount, 0.4),
@@ -173,6 +181,7 @@ def gen_fake_entry(
         )
     )
     tacc = gen_fake(fake, MobileMoneyAccount, provider=provider, holder=user)
+    session.add(tacc)
     picked = []
     for _ in range(transaction_count):
         if random.random() < same_account_ratio:
@@ -181,8 +190,21 @@ def gen_fake_entry(
         else:
             pool = account_pool
             other = random.choice(pool)
-            if other not in picked:
-                picked.append(other)
+        if other not in picked:
+            picked.append(other)
+        session.add(other)
+        session.commit()
+        # TODO: add separate handler for faker generator and object instantiotion args
         tx = gen_fake(
             fake, Transaction, owner_account=tacc, participant_account=other
         )
+        session.add(tx)
+        # ic(other)
+        # ic(tx)
+    session.commit()
+
+
+if __name__ == "__main__":
+    engine = create_engine(CONFIG["DEV_DB_URL"])
+    session = Session(engine)
+    gen_fake(session, transaction_count=200, same_account_ratio=0.4)
