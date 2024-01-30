@@ -4,8 +4,8 @@ import json
 import logging
 import math
 import re
+import sys
 import time
-from datetime import timezone
 from itertools import takewhile
 from pathlib import Path
 from typing import Any, BinaryIO, Dict, List, Optional
@@ -29,31 +29,30 @@ def configure_logger():
     else:
         level = level.upper()
     log_level = getattr(logging, level)
-    structlog.configure(
-        wrapper_class=structlog.make_filtering_bound_logger(log_level),
-        processors=[
-            structlog.contextvars.merge_contextvars,
-            structlog.processors.add_log_level,
-            structlog.processors.StackInfoRenderer(),
+    shared_processors = [
+        structlog.contextvars.merge_contextvars,
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S", utc=True),
+    ]
+    if sys.stderr.isatty():
+        processors = shared_processors + [
             structlog.dev.set_exc_info,
             structlog.processors.format_exc_info,
-            structlog.processors.TimeStamper(
-                fmt="%Y-%m-%d %H:%M:%S", utc=False
-            ),
             structlog.dev.ConsoleRenderer(),
-        ],
+        ]
+    else:
+        processors = shared_processors + [
+            structlog.processors.dict_tracebacks,
+            structlog.processors.JSONRenderer(),
+        ]
+    structlog.configure(
+        wrapper_class=structlog.make_filtering_bound_logger(log_level),
+        processors=processors,
     )
     return structlog.get_logger()
 
 
 logger = configure_logger()
-
-
-class CustEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, datetime.datetime):
-            return o.replace(tzinfo=timezone.utc).timestamp()
-        return json.JSONEncoder.default(self, o)
 
 
 class ParseError(Exception):

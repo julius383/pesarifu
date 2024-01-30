@@ -143,3 +143,10 @@ scratch.py
 static/dist
 node_modules
 *_dump.sql
+.evidence/template
+.svelte-kit
+build
+.DS_Store
+static/data
+*.options.yaml
+.vscode/settings.json
