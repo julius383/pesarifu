@@ -37,5 +37,23 @@ build-styles:
 website-serve: build-styles api-run
     echo "serving website"
 
+reports-setup:
+    npm install
+    npm run sources
+
 reports-serve:
     cd src/reports && npm run dev
+
+build-duckdb:
+    #!/usr/bin/env bash
+    data_dir="src/reports/.evidence/template/static/data/pesarifu"
+    db_file="src/reports/data.duckdb"
+    for data_file in $(fd -e parquet . "$data_dir")
+    do
+        base=$(basename "$data_file")
+        name="${base%.parquet}"
+        echo $name
+        echo $data_file
+        echo
+        duckdb "$db_file" "create table $name as select * from '$data_file'"
+    done
