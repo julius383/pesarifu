@@ -6,13 +6,12 @@ from typing import Any, Optional
 from uuid import UUID, uuid4
 
 import sqlalchemy
-from sqlalchemy import ForeignKey
+from sqlalchemy import CheckConstraint, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import ARRAY, DECIMAL, JSON, String
 
 
 # TODO: figure out migration
-# TODO: create indices and check constraints
 class Base(DeclarativeBase):
     type_annotation_map = {dict[str, Any]: JSON, float: DECIMAL}
 
@@ -67,7 +66,7 @@ class UserAccount(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(
-        String(100), comment="Email used to register."
+        String(100), unique=True, comment="Email used to register."
     )
     phone_number: Mapped[Optional[str]] = mapped_column(
         String(30), comment="Email used to contact user or to send alerts to."
@@ -125,6 +124,7 @@ class SubscriptionPlan(Base):
 
 class Provider(Base):
     __tablename__ = "account_provider"
+    __table_args__ = (UniqueConstraint("name", "organization_type"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(
@@ -171,19 +171,17 @@ class WebReport(Base):
 
 class TransactionalAccount(Base):
     __tablename__ = "transactional_account"
+    __mapper_args__ = {
+        "polymorphic_identity": "transactional_account",
+        "polymorphic_on": "type",
+    }
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    # TODO: add unique constraint of account_name and provider_id
     account_name: Mapped[str] = mapped_column(
         String(500),
         comment="Name associated with this account for example Facebook .inc or John Smith.",
     )
     type: Mapped[str]
-
-    __mapper_args__ = {
-        "polymorphic_identity": "transactional_account",
-        "polymorphic_on": "type",
-    }
     provider_id: Mapped[int] = mapped_column(ForeignKey("account_provider.id"))
     provider: Mapped["Provider"] = relationship(back_populates="accounts")
 
@@ -221,6 +219,7 @@ class BankAccount(TransactionalAccount):
     __mapper_args__ = {
         "polymorphic_identity": "bank_account",
     }
+    __table_args__ = (UniqueConstraint("identifier", "account_type"),)
 
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id"), primary_key=True
@@ -256,6 +255,8 @@ class SafaricomPaybillAccount(TransactionalAccount):
     __mapper_args__ = {
         "polymorphic_identity": "safaricom_paybill_account",
     }
+
+    __table_args__ = (UniqueConstraint("paybill_number", "account_number"),)
 
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id"), primary_key=True
@@ -294,7 +295,7 @@ class SafaricomBuygoodsAccount(TransactionalAccount):
         )
 
 
-# TODO: add unique constraint on account_name and maybe_number
+# FIXME: add unique constraint on account_name and maybe_number
 class MobileMoneyAccount(TransactionalAccount):
     __tablename__ = "mobile_money_account"
 
@@ -309,8 +310,10 @@ class MobileMoneyAccount(TransactionalAccount):
     maybe_number: Mapped[str] = mapped_column(
         String(30),
         comment="May be obfuscated. Use phone_number for usable number",
-    )  # may be obfuscated e.g +254714***460
-    phone_number: Mapped[Optional[str]] = mapped_column(String(30))
+    )
+    phone_number: Mapped[Optional[str]] = mapped_column(
+        String(30), unique=True
+    )
 
     def __repr__(self):
         return self._repr(
@@ -322,6 +325,15 @@ class MobileMoneyAccount(TransactionalAccount):
 
 class Transaction(Base):
     __tablename__ = "transaction"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "amount",
+            "initiated_at",
+            "owner_account_id",
+            "participant_account_id",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     amount: Mapped[float]
