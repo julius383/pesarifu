@@ -151,3 +151,6 @@ scratch.py
 *.options.yaml
 **/.vscode/settings.json
 *.duckdb
+
+# Ignore dynaconf secret files
+.secrets.*

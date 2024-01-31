@@ -1,10 +1,10 @@
 #!/usr/bin/env -S just --working-directory . --justfile
 
-api-run:
+app-run: app-setup
     # sudo systemctl start postgresql.service
     litestar --app pesarifu.api.app:app run --reload
 
-celery-run:
+celery-run: app-setup
     # sudo systemctl start redis.service
     celery --app pesarifu.config.celery worker --loglevel INFO --pool=prefork --concurrency=4
 
@@ -16,9 +16,10 @@ backup:
     tar cvJf uploads.tar.xz --directory=uploads .
     tar cvJf exports.tar.xz --directory=exports .
 
-setup:
+app-setup:
     poetry install
-    touch .env
+    export APP_ROOT="$(pwd)"
+    export ROOT_PATH_FOR_DYNACONF="$(pwd)/src/pesarifu/config/"
     mkdir uploads exports
 
 overview:
@@ -34,14 +35,14 @@ lint:
 build-styles:
     npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css
 
-website-serve: build-styles api-run
+website-serve: build-styles app-run
     echo "serving website"
 
 reports-setup:
     npm install
     npm run sources
 
-reports-serve:
+reports-serve: reports-setup
     cd src/reports && npm run dev
 
 build-duckdb:

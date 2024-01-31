@@ -20,11 +20,11 @@ from pypdf import PdfReader, PdfWriter
 from thefuzz import fuzz
 from toolz import keyfilter
 
-from pesarifu.config.constants import CONFIG, STATEMENTS_BASE_DIR
+from pesarifu.config.config import settings
 
 
 def configure_logger():
-    if (level := CONFIG.get("LOG_LEVEL", None)) is None:
+    if (level := settings.get("LOG_LEVEL", None)) is None:
         level = "INFO"
     else:
         level = level.upper()
@@ -211,7 +211,7 @@ def decrypt_pdf(data: BinaryIO, password: str | None) -> Path:
         reader.decrypt(password)
     for page in reader.pages:
         writer.add_page(page)
-    ofile = STATEMENTS_BASE_DIR / Path(uuid.hex).with_suffix(".pdf")
+    ofile = settings.STATEMENTS_BASE_DIR / Path(uuid.hex).with_suffix(".pdf")
     with open(ofile, "wb") as fp:
         writer.write(fp)
     return ofile

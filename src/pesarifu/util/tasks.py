@@ -7,7 +7,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from toolz import groupby
 
 from pesarifu.config.celery import app
-from pesarifu.config.constants import APP_BASE_URL
+from pesarifu.config.config import settings
 from pesarifu.db.util import db_connector
 from pesarifu.etl.safaricom.load import get_account
 from pesarifu.util.export import export_transactions
@@ -53,7 +53,9 @@ def admin_report(subject, body):
 def generate_report(session, transaction_result):
     account = get_account(session, transaction_result["account_id"])
     rel_path = account.holder.uuid.hex
-    report_path = reduce(urljoin, ["reports/", rel_path], APP_BASE_URL)
+    report_path = reduce(
+        urljoin, ["reports/", rel_path], settings.APP_BASE_URL
+    )
     # TODO: call evidence here and generate PDF report
     # TODO: add entry to WebReport table
     return {

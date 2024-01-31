@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from toolz import compose, concat
 
-from pesarifu.config.constants import CONFIG
+from pesarifu.config.config import settings
 from pesarifu.db.models import (
     Base,
     MobileMoneyAccount,
@@ -205,6 +205,6 @@ def gen_fake_entry(
 
 
 if __name__ == "__main__":
-    engine = create_engine(CONFIG["DEV_DB_URL"])
+    engine = create_engine(settings["DB_URL"])
     session = Session(engine)
     gen_fake(session, transaction_count=200, same_account_ratio=0.4)

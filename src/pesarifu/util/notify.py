@@ -9,11 +9,11 @@ from pathlib import Path
 import apprise
 from apprise import NotifyFormat
 
-from pesarifu.config.constants import CONFIG
+from pesarifu.config.config import settings
 from pesarifu.util.helpers import logger
 
 apobj = apprise.Apprise()
-apobj.add(f"tgram://{CONFIG['TELEGRAM_BOT_TOKEN']}/6081822266", tag="admin")
+apobj.add(f"tgram://{settings['TELEGRAM_BOT_TOKEN']}/6081822266", tag="admin")
 apobj.add("dbus://", tag="admin-local")
 
 
@@ -57,12 +57,12 @@ def build_email(subject, body, from_, sendto, attachments):
 
 
 def notify_user_email(subject, body, sendto, attatchments=None):
-    from_ = f"Pesarifu {CONFIG['MAIL_USER']}"
+    from_ = f"Pesarifu {settings['MAIL_USER']}"
     text = build_email(subject, body, from_, sendto, attatchments)
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(
         "mail.privateemail.com", 465, context=context
     ) as server:
-        server.login(from_, CONFIG["MAIL_PASS"])
+        server.login(from_, settings["MAIL_PASS"])
         server.sendmail(from_, sendto, text)
         logger.info(f"Sent email to {sendto}")

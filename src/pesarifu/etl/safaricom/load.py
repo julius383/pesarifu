@@ -66,6 +66,7 @@ def get_or_create_account(session, obj, provider):
 
         return acc
     elif "maybe_number" in obj:
+        # FIXME: handle assumption that all mobile accounts are from the same provider
         acc = session.scalars(
             select(MobileMoneyAccount)
             .where(MobileMoneyAccount.account_name == obj["account_name"])

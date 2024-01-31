@@ -6,7 +6,7 @@ import pandas as pd
 from sqlalchemy import select
 from sqlalchemy.orm import aliased
 
-from pesarifu.config.constants import EXPORTS_BASE_DIR
+from pesarifu.config.config import settings
 from pesarifu.db.models import Transaction, TransactionalAccount
 from pesarifu.db.util import engine
 from pesarifu.util.helpers import logger
@@ -38,7 +38,7 @@ def export_transactions(account_id, filetypes=(".csv",), path_stem=None):
         paths = []
         for filetype in filetypes:
             filename = Path(path_stem).with_suffix(filetype)
-            path = EXPORTS_BASE_DIR / filename
+            path = settings.EXPORTS_BASE_DIR / filename
             if size >= 1000:
                 filename = filename.with_suffix(".zip")
             if filetype.endswith(".xlsx"):

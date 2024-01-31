@@ -1,9 +1,9 @@
 from celery import Celery
 
-from pesarifu.config.constants import CONFIG
+from pesarifu.config.config import settings
 
-broker = CONFIG["CELERY_BROKER_URL"]
-backend = CONFIG["CELERY_RESULTS_BACKEND"]
+broker = settings["CELERY_BROKER_URL"]
+backend = settings["CELERY_RESULTS_BACKEND"]
 
 app = Celery(
     "pesarifu_tasks",

@@ -4,14 +4,10 @@ import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from pesarifu.config.constants import CONFIG
+from pesarifu.config.config import settings
 from pesarifu.util.helpers import logger
 
-DB_URL = CONFIG["DEV_DB_URL"]
-if CONFIG.get("PROD", False):
-    DB_URL = CONFIG["DB_URL"]
-
-engine = create_engine(DB_URL)
+engine = create_engine(settings.DB_URL)
 Session = sessionmaker(engine)
 
 
