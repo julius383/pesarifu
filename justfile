@@ -39,8 +39,11 @@ website-serve: build-styles app-run
     echo "serving website"
 
 reports-setup:
-    npm install
-    npm run sources
+    cd src/reports && npm install
+    cd src/reports && npm run sources
+
+reports-build: reports-setup
+    cd src/reports && npm run build
 
 reports-serve: reports-setup
     cd src/reports && npm run dev
