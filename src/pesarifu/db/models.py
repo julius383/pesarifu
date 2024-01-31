@@ -6,12 +6,11 @@ from typing import Any, Optional
 from uuid import UUID, uuid4
 
 import sqlalchemy
-from sqlalchemy import CheckConstraint, ForeignKey, UniqueConstraint
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import ARRAY, DECIMAL, JSON, String
 
 
-# TODO: figure out migration
 class Base(DeclarativeBase):
     type_annotation_map = {dict[str, Any]: JSON, float: DECIMAL}
 
