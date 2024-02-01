@@ -2,7 +2,7 @@
 
 app-run: app-setup
     # sudo systemctl start postgresql.service
-    litestar --app pesarifu.api.app:app run --reload
+    litestar --app pesarifu.api.app:app run --debug
 
 celery-run: app-setup
     # sudo systemctl start redis.service
@@ -20,7 +20,7 @@ app-setup:
     poetry install
     export APP_ROOT="$(pwd)"
     export ROOT_PATH_FOR_DYNACONF="$(pwd)/src/pesarifu/config/"
-    mkdir uploads exports
+    -mkdir uploads exports
 
 overview:
     eza --hyperlink --tree --long --group-directories-first --ignore-glob __pycache__ --ignore-glob node_modules --git-ignore
