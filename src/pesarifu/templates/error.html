@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+<style>
+
+</style>
+{% endblock %}
+{% block title %}Pesarifu App{% endblock %}
+{% block content %}
+
+<div class="flex justify-center">
+</div>
+
+<div class="flex h-screen justify-center align-middle">
+<div class="w-7/12 h-10/12 bg-white mt-8">
+    <div class="flex flex-col items-center pb-10 mx-4">
+
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-x" width="84" height="84" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ff4500" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                <path d="M10 10l4 4m0 -4l-4 4" />
+            </svg>
+        <h5 class="mb-1 text-xl font-medium text-red-500">ERROR</h5>
+        <span class="text-sm text-gray-500 mx-8">
+                Unable to process submitted PDF
+            </span>
+            <h2 class="my-2 text-lg font-semibold text-gray-900 dark:text-white">Possible Reasons and what to do</h2>
+            <p class="mb-2">
+                Processing your statement failed because the {{ reason }}. You can get in touch with us to
+                suggest a feature or report any other problems.
+            </p>
+    </div>
+</div>
+</div>
+{% endblock %}

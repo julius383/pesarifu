@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="dist/css/output.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href=
+    "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+    rel="stylesheet">
+        <title> {% block title %}{% endblock %}</title>
+    <style>
+    body {
+        font-family: "Poppins", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+    .logo {
+        color: #e60481;
+        background-image: -webkit-linear-gradient(45deg, #e60481 17%, #20dce1 79%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        text-fill-color: transparent;
+        -webkit-text-fill-color: transparent;
+    }
+    .accordion-link {
+        color: rgb(28 100 242 / var(--tw-text-opacity));
+    }
+    </style>
+    {% endblock %}
+  </head>
+    <body>
+   <script>0</script>
+    <nav class="bg-white border-gray-200">
+      <div class=
+      "max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <a href="https://app.pesarifu.com/" class=
+        "flex items-center space-x-3 rtl:space-x-reverse"><span class=
+        "logo self-center text-2xl font-semibold whitespace-nowrap">Pesarifu</span></a>
+        <button data-collapse-toggle="navbar-default" type="button" class=
+        "inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+        aria-controls="navbar-default" aria-expanded="false"><span class=
+        "sr-only">Open main menu</span> <svg class="w-5 h-5" aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 17 14">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin=
+        "round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15">
+        </path></svg></button>
+        <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+          <ul class=
+          "font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white">
+            <li>
+              <a href="#" class=
+              "block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0"
+              aria-current="page">Home</a>
+            </li>
+            <li>
+              <a href="https://pesarifu.com/" class=
+              "block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+              About</a>
+            </li>
+            <li>
+
+                <button data-modal-target="contact-modal" data-modal-toggle="contact-modal" class=
+                    "relative inline-flex items-center justify-center p-1 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300">
+            >
+                        <span class="relative transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                            contact us
+                        </span>
+            </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="contact-form">
+            <!-- main modal -->
+            <div id="contact-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-md max-h-full">
+                <!-- modal content -->
+                <div class="relative bg-white rounded-lg shadow">
+                    <!-- modal header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                                get in touch with us
+                        </h3>
+                        <button type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="contact-modal">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                            <span class="sr-only">close modal</span>
+                        </button>
+                    </div>
+                    <!-- modal body -->
+                    <div class="p-4 md:p-5">
+                        <form class="space-y-4" action="/contact-us" method="post">
+                                {{ csrf_input | safe }}
+
+                            <div>
+                                <label for="name" class="block mb-2 text-sm font-medium text-gray-900">your name</label>
+                                <input type="text" name="reason" id="reason" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Brian Kamau" required>
+                            </div>
+                            <div>
+
+                                <label for="reason" class=
+                                        "block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Subject
+                                </label>
+                                <select id="reason" class=
+                                        "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                  <option selected value="unsupported_filetype">Add unsupported statement type</option>
+                                  <option value="operational_error">Problem on our end</option>
+                                  <option value="feature_suggestion">New feature suggestion</option>
+                                  <option value="general_feedback">General feedback</option>
+                                  <option value="other">Something else</option>
+                                </select>
+                            </div>
+                            <div>
+
+                                <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your message</label>
+                                <textarea id="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Write your thoughts here...">
+                                    </textarea>
+
+                            </div>
+                            <div>
+                                <label for="email" class="block mb-2 text-sm font-medium text-gray-900">your email (optional, if you want to follow up)</label>
+                                <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@company.com">
+                            </div>
+                            <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div id="footer">
+            {% block footer %} {% endblock %}
+        </div>
+        <script src=
+        "https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    </body>
+</html>
