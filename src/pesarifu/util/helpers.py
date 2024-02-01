@@ -215,3 +215,19 @@ def decrypt_pdf(data: BinaryIO, password: str | None) -> Path:
     with open(ofile, "wb") as fp:
         writer.write(fp)
     return ofile
+
+
+def nothing(**kwargs):
+    for k, v in kwargs.items():
+        logger.info(f"doing nothing on %s=%s", k, v)
+    return
+
+
+def format_timestamp(ts):
+    dt = datetime.datetime.fromtimestamp(ts)
+    # https://stackoverflow.com/a/739266
+    if 4 <= dt.day <= 20 or 24 <= dt.day <= 30:
+        suffix = "th"
+    else:
+        suffix = ["st", "nd", "rd"][dt.day % 10 - 1]
+    return dt.strftime(f"%B %-d{suffix}, %Y")
