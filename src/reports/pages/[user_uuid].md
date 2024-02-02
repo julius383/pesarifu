@@ -1,8 +1,6 @@
-
 ---
 title: Financial Report by Pesarifu
 ---
-
 ``` sql user_accounts
 select * from accounts where user_uuid = UUID'${params.user_uuid}' limit 1
 ```
@@ -119,9 +117,12 @@ group by trunced_date
 
 {@partial "account-comparison.md"}
 
+<div class="print:hidden">
 
 <DataTable data={user_transactions} search="true" rows=20>
     <Column id="initiated_at" title="Transaction Time" fmt="mmmm d, yyyy H:MM:SS AM/PM"/>
     <Column id="amount" title="Amount in Kshs." fmt="num2"/>
     <Column id="account_name" />
 </DataTable>
+
+</div>
