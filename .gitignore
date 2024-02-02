@@ -137,20 +137,17 @@ exports/
 uploads/
 scratch.py
 
-*.json
-
 .envrc
 **/static/dist
 **/node_modules
 *_dump.sql
-**/.evidence/template
 **/.svelte-kit
 **/build
 /.DS_Store
 **/static/data
 *.options.yaml
-**/.vscode/settings.json
 *.duckdb
-
+src/reports/.evidence/
+src/reports/.vscode/
 # Ignore dynaconf secret files
 .secrets.*
