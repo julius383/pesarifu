@@ -145,20 +145,21 @@ class Provider(Base):
 
 
 # TODO: temporarily add way to keep track of PDFs
+# TODO: temporarily add trigger that updates expires_after when page visited
 class WebReport(Base):
     __tablename__ = "web_report"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     created_at: Mapped[float] = mapped_column(default=time.time)
     expires_after: Mapped[timedelta] = mapped_column(
-        default=partial(timedelta, days=7),
+        default=partial(timedelta, days=14),
         comment="How long a web report should stay live",
     )
     expired: Mapped[bool] = mapped_column(default=False)
     web_url: Mapped[str] = mapped_column(
         String(150), comment="URL for web report", unique=True
     )
-    last_visit: Mapped[float] = mapped_column(default=time.time)
+    last_visit: Mapped[Optional[float]] = mapped_column(default=None)
 
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id")

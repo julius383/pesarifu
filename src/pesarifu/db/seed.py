@@ -205,6 +205,6 @@ def gen_fake_entry(
 
 
 if __name__ == "__main__":
-    engine = create_engine(settings["DB_URL"])
+    engine = create_engine(settings["DB_URL"], echo=True)
     session = Session(engine)
-    gen_fake(session, transaction_count=200, same_account_ratio=0.4)
+    gen_fake_entry(session, transaction_count=320, same_account_ratio=0.4)
