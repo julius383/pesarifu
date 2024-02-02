@@ -3,9 +3,11 @@ import functools
 import json
 import logging
 import math
+import os
 import re
 import sys
 import time
+from contextlib import contextmanager
 from itertools import takewhile
 from pathlib import Path
 from typing import Any, BinaryIO, Dict, List, Optional
@@ -231,3 +233,14 @@ def format_timestamp(ts):
     else:
         suffix = ["st", "nd", "rd"][dt.day % 10 - 1]
     return dt.strftime(f"%B %-d{suffix}, %Y")
+
+
+# https://stackoverflow.com/a/24176022
+@contextmanager
+def cd(newdir):
+    prevdir = os.getcwd()
+    os.chdir(os.path.expanduser(newdir))
+    try:
+        yield
+    finally:
+        os.chdir(prevdir)

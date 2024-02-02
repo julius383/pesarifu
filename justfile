@@ -1,6 +1,10 @@
 #!/usr/bin/env -S just --working-directory . --justfile
 
-app-run: app-setup
+app-run:
+    # sudo systemctl start postgresql.service
+    litestar --app pesarifu.api.app:app run --debug
+
+app-run-debug:
     # sudo systemctl start postgresql.service
     litestar --app pesarifu.api.app:app run --debug
 
@@ -8,9 +12,10 @@ celery-run: app-setup
     # sudo systemctl start redis.service
     celery --app pesarifu.config.celery worker --loglevel INFO --pool=prefork --concurrency=4
 
+[confirm("Are you sure want to delete everything?")]
 clean: backup
-    gum confirm "Remove uploaded files" && rmdir uploads/*
-    gum confirm "Remove exported files" && rmdir exports/*
+    rm -r uploads/*
+    rm -r exports/*
 
 backup:
     tar cvJf uploads.tar.xz --directory=uploads .
@@ -18,7 +23,9 @@ backup:
 
 app-setup:
     poetry install
+    npm install
     export APP_ROOT="$(pwd)"
+    export DYNACONF_APP_ROOT="$(pwd)"
     export ROOT_PATH_FOR_DYNACONF="$(pwd)/src/pesarifu/config/"
     -mkdir uploads exports
 
@@ -32,6 +39,9 @@ lint:
     isort src/
     black src/
 
+setup: app-setup reports-setup
+    echo "Running setup"
+
 build-styles:
     npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css
 
@@ -40,12 +50,15 @@ website-serve: build-styles app-run
 
 reports-setup:
     cd src/reports && npm install
-    cd src/reports && npm run sources
 
-reports-build: reports-setup
+reports-build:
+    cd src/reports && npm run sources
     cd src/reports && npm run build
 
-reports-serve: reports-setup
+reports-build-serve: reports-build
+    cd src/reports/ && npm run preview
+
+reports-serve:
     cd src/reports && npm run dev
 
 build-duckdb:

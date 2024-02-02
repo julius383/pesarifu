@@ -4,13 +4,17 @@ from typing import Any, Optional
 from urllib.parse import urljoin
 
 from jinja2 import Environment, PackageLoader, select_autoescape
+from sh import ErrorReturnCode, just
+from sqlalchemy import select
 from toolz import groupby
 
 from pesarifu.config.celery import app
 from pesarifu.config.config import settings
+from pesarifu.db.models import WebReport
 from pesarifu.db.util import db_connector
 from pesarifu.etl.safaricom.load import get_account
 from pesarifu.util.export import export_transactions
+from pesarifu.util.helpers import cd, logger
 from pesarifu.util.notify import notify_admin, notify_local, notify_user_email
 
 env = Environment(
@@ -54,13 +58,26 @@ def generate_report(session, transaction_result):
     account = get_account(session, transaction_result["account_id"])
     rel_path = account.holder.uuid.hex
     report_path = reduce(
-        urljoin, ["reports/", rel_path], settings.APP_BASE_URL
+        urljoin, ["reports/", rel_path], settings.REPORTS_BASE_URL
     )
-    # TODO: call evidence here and generate PDF report
-    # TODO: add entry to WebReport table
-    return {
-        "account_id": transaction_result["account_id"],
-        "link": report_path,
-        "account_name": account.account_name,
-        "sendto": account.holder.email,
-    }
+    try:
+        with cd(settings.APP_ROOT):
+            just("reports-build")  # see justfile in project root
+        maybe_report = session.scalars(
+            select(WebReport).where(WebReport.account_id == account.id)
+        ).one()
+        if maybe_report:
+            report = maybe_report
+        else:
+            report = WebReport(web_url=report_path, account=account)
+            # TODO: decide if worth it to generate PDF
+            session.add(report)
+            session.commit()
+        return {
+            "account_id": transaction_result["account_id"],
+            "link": report.web_url,
+            "account_name": account.account_name,
+            "sendto": account.holder.email,
+        }
+    except ErrorReturnCode:
+        logger.error("Failed to rebuild evidence report")
