@@ -1,6 +1,7 @@
 -- build struct in accounts.sql with account information
 SELECT
-    ua.id,
+    ua.id as user_id,
+    ta.id as account_id,
     account_name,
     type,
     ua.uuid as user_uuid

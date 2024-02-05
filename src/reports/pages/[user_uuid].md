@@ -6,7 +6,7 @@ select * from accounts where user_uuid = UUID'${params.user_uuid}' limit 1
 ```
 
 ``` sql account_ids
-select id from ${user_accounts}
+select account_id from ${user_accounts}
 ```
 
 ``` sql user_transactions
