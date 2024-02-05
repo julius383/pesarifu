@@ -57,12 +57,13 @@ def build_email(subject, body, from_, sendto, attachments):
 
 
 def notify_user_email(subject, body, sendto, attatchments=None):
-    from_ = f"Pesarifu {settings['MAIL_USER']}"
-    text = build_email(subject, body, from_, sendto, attatchments)
+    from_ = settings.MAIL_USER
+    from_with_name = f"Pesarifu {settings.MAIL_USER}"
+    text = build_email(subject, body, from_with_name, sendto, attatchments)
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(
         "mail.privateemail.com", 465, context=context
     ) as server:
-        server.login(from_, settings["MAIL_PASS"])
+        server.login(from_, settings["MAIL_PASSWORD"])
         server.sendmail(from_, sendto, text)
         logger.info(f"Sent email to {sendto}")

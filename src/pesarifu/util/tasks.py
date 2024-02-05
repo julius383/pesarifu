@@ -61,11 +61,12 @@ def generate_report(session, transaction_result):
         urljoin, ["reports/", rel_path], settings.REPORTS_BASE_URL
     )
     try:
+        logger.info("Generating report on path: %s", report_path)
         with cd(settings.APP_ROOT):
             just("reports-build")  # see justfile in project root
         maybe_report = session.scalars(
             select(WebReport).where(WebReport.account_id == account.id)
-        ).one()
+        ).one_or_none()
         if maybe_report:
             report = maybe_report
         else:
@@ -73,11 +74,11 @@ def generate_report(session, transaction_result):
             # TODO: decide if worth it to generate PDF
             session.add(report)
             session.commit()
-        return {
-            "account_id": transaction_result["account_id"],
-            "link": report.web_url,
-            "account_name": account.account_name,
-            "sendto": account.holder.email,
-        }
     except ErrorReturnCode:
         logger.error("Failed to rebuild evidence report")
+    return {
+        "account_id": account.id,
+        "link": report_path,
+        "account_name": account.account_name,
+        "sendto": account.holder.email,
+    }

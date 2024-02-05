@@ -1,6 +1,7 @@
 from typing import Any
 
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from pesarifu.db.models import (
     MobileMoneyAccount,
@@ -25,7 +26,7 @@ def get_user(session, email=None, id_=None):
     return session.scalars(q).first()
 
 
-def get_account(session, account_id):
+def get_account(session: Session, account_id: int) -> TransactionalAccount:
     return session.scalars(
         select(TransactionalAccount).where(
             TransactionalAccount.id == account_id
