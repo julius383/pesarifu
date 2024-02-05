@@ -31,14 +31,14 @@ Ensure the following are defined in `pesarifu.config` folder
     - `EXPORTS_BASE_DIR` - where csv/excel etc exports are stored before being
        sent
 - In .secrets.toml
-    - `MAIL_PASS` - password for the `MAIL_USER` email
-    - `DEV_DB_URL` - alternate DB url for testing purposes
-    - `DB_URL` - url for accessing DB through SQLAlchemy, expects postgres
+    - `MAIL_PASSWORD` - password for the `MAIL_USER` email
+    - `TELEGRAM_BOT_TOKEN` - token for Telegram messaging
+    - `DB_URL` - production and development url for accessing DB through SQLAlchemy, expects postgres
 
 
 ## Running
 
-- Make sure `redis` and `postgres` are started
+- Make sure `redis` and `postgres` are running
 - Use `just celery-run` to start celery workers
 - Use `just website-serve` to start the web app
 - Use `just reports-serve` to start the evidence report backend
