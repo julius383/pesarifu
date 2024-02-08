@@ -1,5 +1,8 @@
 #!/usr/bin/env -S just --working-directory . --justfile
 
+DB_URL := `dynaconf -i pesarifu.config.config.settings get 'DB_URL'`
+DATABASE := `basename "{{DB_URL}}"`
+
 app-run:
     # sudo systemctl start postgresql.service
     litestar --app pesarifu.api.app:app run --debug
@@ -32,6 +35,23 @@ app-setup:
 overview:
     eza --hyperlink --tree --long --group-directories-first --ignore-glob __pycache__ --ignore-glob node_modules --git-ignore
 
+db-stats:
+    #!/usr/bin/env bash
+    cat << EOF | psql --dbname={{DATABASE}} --file -
+    select
+        distinct tx.owner_account_id,
+        ta.account_name,
+        ta.type, count(1) as transaction_count
+    from transaction tx
+    inner join transactional_account ta on tx.owner_account_id = ta.id
+    group by
+        tx.owner_account_id,
+        ta.account_name,
+        ta.type
+    order by
+        transaction_count;
+    EOF
+
 tasks:
     rg --pretty --max-depth 50 --glob '!justfile' 'FIXME|TODO'
 
@@ -55,7 +75,7 @@ reports-build:
     cd src/reports && npm run sources
     cd src/reports && npm run build
 
-reports-build-serve: reports-build
+reports-build-serve:
     cd src/reports/ && npm run preview
 
 reports-serve:

@@ -151,3 +151,4 @@ src/reports/.evidence/
 src/reports/.vscode/
 # Ignore dynaconf secret files
 .secrets.*
+logs/
