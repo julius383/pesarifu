@@ -123,9 +123,7 @@ def upgrade() -> None:
     sa.Column('account_number', sa.String(length=100), nullable=True, comment='May not always be present since sometimes organizations use them to partition accounts'),
     sa.ForeignKeyConstraint(['account_id'], ['transactional_account.id'], ),
     sa.PrimaryKeyConstraint('account_id'),
-    sa.UniqueConstraint('account_number'),
     sa.UniqueConstraint('paybill_number'),
-    sa.UniqueConstraint('paybill_number', 'account_number')
     )
     op.create_table('transaction',
     sa.Column('id', sa.Integer(), nullable=False),

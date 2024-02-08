@@ -51,7 +51,7 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
         (
             TransactionTypes.BUYGOODS_TRANSFER,
             re.compile(
-                r"Merchant Payment Online to (?P<buygoods_number>[0-9]{6,8}) - (?P<account_name>.*)$",
+                r"Merchant Payment (?:Online )?to (?P<buygoods_number>[0-9]{6,8}) - (?P<account_name>.*)$",
                 re_flags,
             ),
         ),
@@ -65,14 +65,14 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
         (
             TransactionTypes.PAYBILL_TRANSFER,
             re.compile(
-                r"Pay Bill Online to (?P<paybill_number>[0-9]{6,8}) - (?P<account_name>(?:.+\s+)+)Acc\.\s+(?P<account_number>.+)$",
+                r"Pay Bill (?:Online )?to (?P<paybill_number>[0-9]{6,8}) - (?P<account_name>(?:.+\s+)+)Acc\.\s+(?P<account_number>.+)$",
                 re_flags,
             ),
         ),
         (
             TransactionTypes.BUYGOODS_TRANSFER,
             re.compile(
-                r"(?:Business|Salary) Payment from (?P<buygoods_number>[0-9]{6,8}) - (?P<account_name>(?:.+\s+)+)via (?P<detail>.*).$",
+                r"(?:Business|Salary|Promotion) Payment from (?P<buygoods_number>[0-9]{6,8}) - (?P<account_name>(?:.+\s+)+)via (?P<detail>.*).$",
                 re_flags,
             ),
         ),
@@ -104,6 +104,34 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
                 re_flags,
             ),
         ),
+        (
+            TransactionTypes.SAFARICOM_TRANSFER,
+            re.compile(
+                r"(?P<purpose>Withdrawal Charge)",
+                re_flags,
+            ),
+        ),
+        (
+            TransactionTypes.SAFARICOM_TRANSFER,
+            re.compile(
+                r"(?P<purpose>Buy Bundles Online)",
+                re_flags,
+            ),
+        ),
+        (
+            TransactionTypes.SAFARICOM_TRANSFER,
+            re.compile(
+                r"(?P<purpose>M-Shwari (?:Withdraw|Deposit))",
+                re_flags,
+            ),
+        ),
+        (
+            TransactionTypes.SAFARICOM_TRANSFER,
+            re.compile(
+                r"^(?P<purpose>Customer Withdrawal .*)",
+                re_flags,
+            ),
+        ),
     ]
 
     for k, v in patterns:
@@ -115,7 +143,9 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
 
 def parse_date(date: str) -> float:
     "Parse date format found in Mpesa statement header"
-    p = re.compile(r"(?P<day>\d{2})[a-z]{2}\s+(?P<month>\d)\s+(?P<year>\d{4})")
+    p = re.compile(
+        r"(?P<day>\d{2})[a-z]{2}\s+(?P<month>\d+)\s+(?P<year>\d{4})"
+    )
     match = re.match(p, date)
     if match:
         return datetime(
@@ -177,7 +207,10 @@ def transform_pdf_record(record):
                 info["account_name"] = pipe(
                     info["account_name"], str.strip, str.title
                 )
-            case TransactionTypes.BUYGOODS_TRANSFER | TransactionTypes.PAYBILL_TRANSFER:
+            case (
+                TransactionTypes.BUYGOODS_TRANSFER
+                | TransactionTypes.PAYBILL_TRANSFER
+            ):
                 info["account_name"] = pipe(info["account_name"], str.strip)
             case TransactionTypes.SAFARICOM_TRANSFER:
                 transaction["purpose"] = info["purpose"]

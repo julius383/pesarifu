@@ -256,7 +256,7 @@ class SafaricomPaybillAccount(TransactionalAccount):
         "polymorphic_identity": "safaricom_paybill_account",
     }
 
-    __table_args__ = (UniqueConstraint("paybill_number", "account_number"),)
+    # __table_args__ = (UniqueConstraint("paybill_number", "account_number"),)
 
     account_id: Mapped[int] = mapped_column(
         ForeignKey("transactional_account.id"), primary_key=True
@@ -264,7 +264,6 @@ class SafaricomPaybillAccount(TransactionalAccount):
     paybill_number: Mapped[str] = mapped_column(String(10), unique=True)
     account_number: Mapped[Optional[str]] = mapped_column(
         String(100),
-        unique=True,
         comment="May not always be present since sometimes organizations use them to partition accounts",
     )
 
