@@ -1,7 +1,5 @@
 #!/usr/bin/env -S just --working-directory . --justfile
 
-DB_URL := `dynaconf -i pesarifu.config.config.settings get 'DB_URL'`
-DATABASE := `basename "{{DB_URL}}"`
 DEPLOY_LOC := "linuxuser@horo"
 
 app-run:
@@ -36,9 +34,9 @@ app-setup:
 overview:
     eza --hyperlink --tree --long --group-directories-first --ignore-glob __pycache__ --ignore-glob node_modules --git-ignore
 
-db-stats:
+db-stats database:
     #!/usr/bin/env bash
-    cat << EOF | psql --dbname={{DATABASE}} --file -
+    cat << EOF | psql --dbname={{database}} --file -
     select
         distinct tx.owner_account_id,
         ta.account_name,
