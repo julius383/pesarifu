@@ -2,6 +2,7 @@
 
 DB_URL := `dynaconf -i pesarifu.config.config.settings get 'DB_URL'`
 DATABASE := `basename "{{DB_URL}}"`
+DEPLOY_LOC := "linuxuser@horo"
 
 app-run:
     # sudo systemctl start postgresql.service
@@ -54,6 +55,15 @@ db-stats:
 
 tasks:
     rg --pretty --max-depth 50 --glob '!justfile' 'FIXME|TODO'
+
+deploy:
+    #!/usr/bin/env bash
+    repo_dir=$(mktemp --directory)
+    echo "cloning into $repo_dir"
+    git clone https://github.com/julius383/pesarifu.git --depth 1 "$repo_dir"
+    rsync --exclude-from=.gitignore --archive --progress --cvs-exclude --verbose --perms "${repo_dir}/" {{DEPLOY_LOC}}:pesarifu
+    scp -i ~/.ssh/id_ed25519 ./src/pesarifu/config/.secrets.toml {{DEPLOY_LOC}}:pesarifu/src/pesarifu/config/.secrets.toml
+    rm -rf "$repo_dir"
 
 lint:
     isort src/
