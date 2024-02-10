@@ -202,7 +202,12 @@ class TransactionalAccount(Base):
     balance: Mapped[Optional[float]] = mapped_column(
         comment="Balance of account at last_checked"
     )
-    last_checked: Mapped[Optional[float]] = mapped_column(onupdate=time.time)
+    created_at: Mapped[float] = mapped_column(
+        default=time.time
+    )  # Unix timestamp
+    updated_at: Mapped[float] = mapped_column(
+        default=time.time, onupdate=time.time
+    )  # Unix timestamp
 
     def __repr__(self):
         return self._repr(
@@ -331,6 +336,7 @@ class Transaction(Base):
             "initiated_at",
             "owner_account_id",
             "participant_account_id",
+            name="transaction_unique_constraint",
         ),
     )
 
@@ -352,6 +358,12 @@ class Transaction(Base):
         back_populates="participating_transactions",
         foreign_keys=[participant_account_id],
     )
+    created_at: Mapped[float] = mapped_column(
+        default=time.time
+    )  # Unix timestamp
+    updated_at: Mapped[float] = mapped_column(
+        default=time.time, onupdate=time.time
+    )  # Unix timestamp
     # currency_id: Mapped[int] = mapped_column(ForeignKey("currency.id"))
     purpose: Mapped[Optional[str]]
     transaction_reference: Mapped[Optional[str]] = mapped_column(
