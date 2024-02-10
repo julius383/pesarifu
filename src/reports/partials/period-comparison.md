@@ -4,11 +4,6 @@ select
 from ${user_transactions}
 ```
 
-<Dropdown name=relevant_period defaultValue={ distinct_months.length > 2 ? "month" : "week" } >
-    <DropdownOption value="month" valueLabel="Monthly"/>
-    <DropdownOption value="week" valueLabel="Weekly" />
-</Dropdown>
-
 
 ```sql period_trunced
 select
@@ -101,6 +96,12 @@ into
     value amount
 
 ```
+
+<Dropdown name=relevant_period defaultValue={ distinct_months.length > 2 ? "month" : "week" } >
+    <DropdownOption value="month" valueLabel="Monthly"/>
+    <DropdownOption value="week" valueLabel="Weekly" />
+</Dropdown>
+
 
 <BarChart
     data={barchart_data}
