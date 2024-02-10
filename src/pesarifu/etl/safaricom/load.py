@@ -1,6 +1,8 @@
+from time import time
 from typing import Any
 
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from pesarifu.db.models import (
@@ -144,9 +146,19 @@ def create_transaction(
     other_account = transaction.pop("other_account")
     provider = get_or_create_provider(session)
     other = get_or_create_account(session, other_account, provider=provider)
-    tx = Transaction(
-        **transaction, owner_account=account, participant_account=other
-    )
-    session.add(tx)
     session.commit()
-    return tx.id
+    tx_id = session.scalars(
+        insert(Transaction)
+        .returning(Transaction.id)
+        .values(
+            **transaction,
+            owner_account_id=account.id,
+            participant_account_id=other.id,
+        )
+        .on_conflict_do_update(
+            constraint="transaction_unique_constraint",
+            set_=dict(updated_at=(time())),
+        )
+    ).one()
+    session.commit()
+    return tx_id
