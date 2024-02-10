@@ -4,6 +4,7 @@ from functools import partial
 from math import ceil
 from operator import methodcaller
 
+import sqlalchemy
 from faker import Faker
 from icecream import ic
 from sqlalchemy import create_engine
@@ -157,7 +158,9 @@ def gen_fake_entry(
 ):
     # TODO: add items to session and save to test database
     fake = Faker()
-    Faker.seed(0)
+    s = random.randint(0, 1000)
+    Faker.seed(s)
+    print(f"Populating database with seed: {s}")
     user = gen_fake(fake, UserAccount)
     provider = gen_fake(fake, Provider)
     # ic(user)
