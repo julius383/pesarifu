@@ -4,7 +4,7 @@ DEPLOY_LOC := "linuxuser@horo"
 
 app-run:
     # sudo systemctl start postgresql.service
-    litestar --app pesarifu.api.app:app run --debug
+    litestar --app pesarifu.api.app:app run
 
 app-run-debug:
     # sudo systemctl start postgresql.service
@@ -24,12 +24,17 @@ backup:
     tar cvJf exports.tar.xz --directory=exports .
 
 app-setup:
+    #!/usr/bin/env bash
     poetry install
     npm install
+    cat << EOF > .env
+    export PYTHONPATH=$PYTHONPATH:$(poetry env info --path)/lib/python3.10/site-packages
+    export ENV_FOR_DYNACONF=production
     export APP_ROOT="$(pwd)"
     export DYNACONF_APP_ROOT="$(pwd)"
     export ROOT_PATH_FOR_DYNACONF="$(pwd)/src/pesarifu/config/"
-    -mkdir uploads exports
+    EOF
+    mkdir uploads exports || true
 
 overview:
     eza --hyperlink --tree --long --group-directories-first --ignore-glob __pycache__ --ignore-glob node_modules --git-ignore
