@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: da1f60c82d16
+Revision ID: 6e6e9fc78065
 Revises:
-Create Date: 2024-02-02 17:58:04.919767
+Create Date: 2024-02-10 12:30:33.267023
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'da1f60c82d16'
+revision: str = '6e6e9fc78065'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -84,7 +84,8 @@ def upgrade() -> None:
     sa.Column('provider_id', sa.Integer(), nullable=False),
     sa.Column('holder_id', sa.Integer(), nullable=True),
     sa.Column('balance', sa.DECIMAL(), nullable=True, comment='Balance of account at last_checked'),
-    sa.Column('last_checked', sa.DECIMAL(), nullable=True),
+    sa.Column('created_at', sa.DECIMAL(), nullable=False),
+    sa.Column('updated_at', sa.DECIMAL(), nullable=False),
     sa.ForeignKeyConstraint(['holder_id'], ['user_account.id'], ),
     sa.ForeignKeyConstraint(['provider_id'], ['account_provider.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -123,7 +124,7 @@ def upgrade() -> None:
     sa.Column('account_number', sa.String(length=100), nullable=True, comment='May not always be present since sometimes organizations use them to partition accounts'),
     sa.ForeignKeyConstraint(['account_id'], ['transactional_account.id'], ),
     sa.PrimaryKeyConstraint('account_id'),
-    sa.UniqueConstraint('paybill_number'),
+    sa.UniqueConstraint('paybill_number')
     )
     op.create_table('transaction',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -131,6 +132,8 @@ def upgrade() -> None:
     sa.Column('initiated_at', sa.DECIMAL(), nullable=False, comment='When did this transaction happen'),
     sa.Column('owner_account_id', sa.Integer(), nullable=False),
     sa.Column('participant_account_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DECIMAL(), nullable=False),
+    sa.Column('updated_at', sa.DECIMAL(), nullable=False),
     sa.Column('purpose', sa.String(), nullable=True),
     sa.Column('transaction_reference', sa.String(length=50), nullable=True, comment='Reference given along with transaction'),
     sa.Column('original_detail', sa.String(length=500), nullable=True, comment='Original text that was part of transaction message.'),
@@ -138,7 +141,7 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['owner_account_id'], ['transactional_account.id'], ),
     sa.ForeignKeyConstraint(['participant_account_id'], ['transactional_account.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('amount', 'initiated_at', 'owner_account_id', 'participant_account_id')
+    sa.UniqueConstraint('amount', 'initiated_at', 'owner_account_id', 'participant_account_id', name="transaction_unique_constraint")
     )
     op.create_table('web_report',
     sa.Column('id', sa.Integer(), nullable=False),
