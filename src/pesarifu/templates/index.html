@@ -5,7 +5,7 @@
     "h-full container mx-auto px-4 flex flex-col items-center justify-center min-w-90">
       <div class="my-4 w-full">
         <div class="flex flex-col gap-4 mx-auto justify-center items-center">
-            <form class="w-7/12 mx-auto gap-2" action="/process-pdf" method="post"
+            <form class="lg:w-7/12 sm:10/12 mx-auto gap-2" action="/process-pdf" method="post"
           enctype="multipart/form-data">
           {{ csrf_input | safe }}
             <label class="block mb-2 text-sm font-medium text-gray-900" for=
@@ -48,7 +48,7 @@
           </form>
         </div>
       </div>
-      <div id="accordion-collapse" class="w-8/12" data-accordion="collapse">
+      <div id="accordion-collapse" class="lg:w-8/12 sm:11/12" data-accordion="collapse">
         <h2 id="accordion-collapse-heading-1">
           <button type="button" class=
           "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 focus:ring-4 focus:ring-gray-200 hover:bg-gray-100 gap-3"
