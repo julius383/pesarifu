@@ -1,5 +1,5 @@
 {
-  "name": "mpesa-analytics",
+  "name": "pesarifu",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -18,7 +18,7 @@
     "react-redux": "^8.1.2",
     "react-router": "^6.14.2",
     "react-router-dom": "^6.14.2",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-scroll-parallax": "^3.4.2",
     "react-type-animation": "^3.1.0",
     "typescript": "^4.9.5",
