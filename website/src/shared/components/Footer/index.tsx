@@ -7,6 +7,7 @@ import "./footer.css";
 // import { Icon } from "@iconify/react";
 // import Button from "../Button";
 import { Link } from "react-router-dom";
+import logo from "../../../logo.svg";
 
 const Footer: React.FC<{}> = () => {
   function getYear() {
@@ -48,12 +49,7 @@ const Footer: React.FC<{}> = () => {
 
           <div className="absolute top-[50%] left-[50%] centerAbsolute">
             <Link to="/" className="text-xl font-medium textColorLight">
-              {/* <img
-              src={isDarkMode ? Logo : LogoDark}
-              alt="Logo"
-              className="h-7 pointer-events-none"
-            /> */}
-              Logo
+              <img src={logo} alt="logo" className="w-32 h-12" />
             </Link>
           </div>
         </div>
