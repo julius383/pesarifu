@@ -1,0 +1,13 @@
+.box {
+  position: relative;
+  /* width: 100%; */
+  display: inline-flex;
+}
+
+.buttonBox {
+  position: absolute;
+  display: inline;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+}

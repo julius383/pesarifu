@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   viewBox="0 0 41.655861 8.0750568"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient2">
+      <stop
+         style="stop-color:#e60481;stop-opacity:1;"
+         offset="0"
+         id="stop2" />
+      <stop
+         style="stop-color:#20dce1;stop-opacity:1;"
+         offset="1"
+         id="stop3" />
+    </linearGradient>
+    <linearGradient
+       href="#linearGradient2"
+       id="linearGradient3"
+       x1="82.266815"
+       y1="150.66895"
+       x2="141.1608"
+       y2="150.66895"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-70.517018,-134.56537)" />
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-11.167714,-14.594413)">
+    <text
+       whitespace="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:14.1111px;line-height:1.25;font-family:Montserrat;-inkscape-font-specification:'Montserrat, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient3);stroke:none;stroke-width:0.264583"
+       x="10.056468"
+       y="22.60597"
+       id="text1"><tspan
+         id="tspan1"
+         x="10.056468"
+         y="22.60597"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:10.5833px;font-family:Montserrat;-inkscape-font-specification:'Montserrat, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:url(#linearGradient3);stroke-width:0.264583">Pesarifu</tspan></text>
+  </g>
+</svg>

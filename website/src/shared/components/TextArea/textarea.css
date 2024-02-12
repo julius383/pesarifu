@@ -1,0 +1,50 @@
+:root {
+  --inputText-color: inherit;
+  --inputBorder-color: #000000;
+}
+
+textarea:focus {
+  outline: none;
+}
+
+.textAreaStyle {
+  padding: 6px 12px;
+  border: 0px;
+  color: var(--inputText-color);
+  width: 100%;
+}
+
+.textAreaStyle--circle {
+  border-radius: 50px;
+  border: 1px solid var(--appColor-black);
+}
+.textAreaStyle--rounded {
+  border-radius: 50px;
+  border: 1px solid var(--appColor-black);
+}
+.textAreaStyle--slightlyRounded {
+  border-radius: 7px;
+  border: 1px solid var(--appColor-black);
+}
+.textAreaStyle--box {
+  border-radius: 0;
+  border: 1px solid var(--appColor-black);
+}
+.textAreaStyle--line {
+  box-shadow: 0px 1px 0px var(--inputBorder-color);
+}
+
+textarea[type="number"]::-webkit-inner-spin-button,
+textarea[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+textarea[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.activeInputGlow:focus {
+  outline: none;
+  border-color: var(--appColor-main);
+  box-shadow: 0 0 5px var(--appColor-main);
+}

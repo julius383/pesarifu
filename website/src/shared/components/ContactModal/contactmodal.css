@@ -1,0 +1,9 @@
+.contact-modal {
+    background-color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    transition: all 0.6s ease-in-out;
+}
