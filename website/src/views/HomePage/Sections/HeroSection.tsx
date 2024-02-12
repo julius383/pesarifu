@@ -6,19 +6,22 @@ import Abstract from "../../../assets/abstract.webp";
 import scrollTo from "../../../shared/functions/scrollTo";
 
 const HeroSection: React.FC<{}> = () => {
+  const openUrl = (url: string) => {
+    window.open(url, "_self", "noreferrer");
+  };
   return (
     <div className="w-full flex flex-row justify-center">
       <div className="max-w-[1536px] w-full h-screen flex md:flex-col-reverse flex-row md:justify-center gap-5 md:px-5 px-10 py-24">
         {/* First half of the section */}
         <div className="md:w-full w-1/2 md-min:ml-5 flex flex-col justify-center">
           <h1 className="md:text-2xl text-4xl font-bold">
-            Unlock Powerful Insights with Pesarifu
+            Elevate Your Financial Awareness with Pesarifu
           </h1>
           <TypeAnimation
             sequence={[
               "Discover Hidden Trends in your Financial Data!",
               5000,
-              "Turn Your M-Pesa Transaction Activity into Actionable Intelligence",
+              "Turn Your Transaction Activity into Actionable Intelligence",
               5000,
             ]}
             wrapper="span"
@@ -31,35 +34,30 @@ const HeroSection: React.FC<{}> = () => {
             <div className="">
               <Button
                 id="sign-up"
-                className=""
+                className="font-medium"
                 backgroundColor="var(--appColor-dark)"
                 color="var(--appColor-light)"
                 type="button"
-                option="rounded"
+                option="slightlyRounded"
                 label="Get Started"
                 border="1px solid var(--appColor-dark)"
-                onClick={() => {}}
+                onClick={() => {openUrl("https://app.pesarifu.com")}}
               />
             </div>
 
-            <div className="flex flex-row items-center">
+            <div className="flex flex-row items-center border-solid border-2 border-blue-400">
               <Button
                 id="login"
-                className=""
-                backgroundColor="transparent"
-                color="var(--appColor-dark)"
+                className="font-meduim"
+                backgroundColor="white"
+                color="#60a5fa"
                 type="button"
-                option="rounded"
-                label="Learn More"
+                option="slightlyRounded"
+                label="Live Demo"
                 padding="8px 10px"
-                onClick={() => scrollTo("intro-section")}
+                onClick={() => {openUrl("https://app.pesarifu.com/demo")}}
               />
 
-              <Icon
-                icon="mingcute:arrow-right-line"
-                height={24}
-                color="var(--appColor-dark)"
-              />
             </div>
           </div>
         </div>

@@ -48,7 +48,7 @@ const Footer: React.FC<{}> = () => {
           </div> */}
 
           <div className="absolute top-[50%] left-[50%] centerAbsolute">
-            <Link to="/" className="text-xl font-medium textColorLight">
+            <Link to="/" className="text-xl">
               <img src={logo} alt="logo" className="w-32 h-12" />
             </Link>
           </div>
@@ -58,7 +58,7 @@ const Footer: React.FC<{}> = () => {
         <div className="w-full flex flex-row justify-between items-center">
           <div className="">
             <p className="text-sm">
-              &copy; {getYear()} <a href="https://google.com/"> Pesarifu.</a>
+              &copy; {getYear()} <a href="https://pesarifu.com/"> Pesarifu.</a>
             </p>
           </div>
 

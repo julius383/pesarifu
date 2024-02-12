@@ -16,8 +16,7 @@ const IntroSection: React.FC<{}> = () => {
         >
           <div className="w-full">
             <p className="md:text-2xl text-4xl font-bold">
-              Welcome to Pesarifu, where data-driven decisions meet financial
-              empowerment!
+              Welcome to Pesarifu, where we empower your financial decision-making through data analysis
             </p>
           </div>
         </Parallax>
@@ -30,8 +29,7 @@ const IntroSection: React.FC<{}> = () => {
         >
           <div className="w-full py-20 flex flex-row justify-end">
             <p className="md:text-2xl text-4xl font-bold text-right">
-              Are you tired of wondering how to maximize the potential of your
-              M-Pesa transactions?
+              Tired of the uncertainty surrounding your transaction activity?
             </p>
           </div>
         </Parallax>
@@ -39,10 +37,8 @@ const IntroSection: React.FC<{}> = () => {
         <Parallax speed={11} translateY={[50, 0]} className="py-24">
           <div className="w-full py-20 flex flex-row justify-center">
             <p className="md:text-2xl text-4xl font-bold text-center">
-              Look no further! Our cutting-edge analytics platform is designed
-              to extract valuable insights from your M-Pesa activities,
-              empowering you with the knowledge you need to make informed,
-              strategic decisions.
+              Don't settle for guesswork. Try Pesarifu's intuitive analytics platform,
+              designed to help you make informed decisions effortlessly.
             </p>
           </div>
         </Parallax>
