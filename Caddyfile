@@ -1,0 +1,11 @@
+reports.pesarifu.com {
+    root * ./src/reports/build
+    file_server {
+        hide ./src/reports/build/users
+    }
+}
+
+pesarifu.com {
+    root * ./src/website/build
+    file_server
+}
