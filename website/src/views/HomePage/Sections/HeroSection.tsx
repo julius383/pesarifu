@@ -8,7 +8,7 @@ import scrollTo from "../../../shared/functions/scrollTo";
 const HeroSection: React.FC<{}> = () => {
   return (
     <div className="w-full flex flex-row justify-center">
-      <div className="max-w-[1536px] w-full h-screen flex md:flex-col flex-row md:justify-center gap-5 md:px-5 px-10 py-24">
+      <div className="max-w-[1536px] w-full h-screen flex md:flex-col-reverse flex-row md:justify-center gap-5 md:px-5 px-10 py-24">
         {/* First half of the section */}
         <div className="md:w-full w-1/2 md-min:ml-5 flex flex-col justify-center">
           <h1 className="md:text-2xl text-4xl font-bold">
@@ -16,9 +16,9 @@ const HeroSection: React.FC<{}> = () => {
           </h1>
           <TypeAnimation
             sequence={[
-              "Harness the Hidden Potential of Your Financial Data!",
+              "Discover Hidden Trends in your Financial Data!",
               5000,
-              "Turn Your M-Pesa Activities into Actionable Intelligence",
+              "Turn Your M-Pesa Transaction Activity into Actionable Intelligence",
               5000,
             ]}
             wrapper="span"
@@ -65,7 +65,7 @@ const HeroSection: React.FC<{}> = () => {
         </div>
 
         {/* Second half */}
-        <div className="md:hidden w-1/2 h-full flex flex-col justify-center items-center">
+        <div className="md:h-1/2 md:w-full w-1/2 h-full flex flex-col justify-center items-center">
           <div className="w-full h-full">
             <img
               className="w-full h-full object-contain"
