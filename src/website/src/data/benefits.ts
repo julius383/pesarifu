@@ -6,7 +6,7 @@ export interface IBenefitsProps {
 export const benefits_data: Array<IBenefitsProps> = [
   {
     icon: "carbon:text-link-analysis",
-    description: "Track and analyze transaction trends for better financial planning",
+    description: "Track and analyze transactional trends for better financial planning",
   },
   {
     icon: "fluent:slide-hide-20-filled",
@@ -14,7 +14,7 @@ export const benefits_data: Array<IBenefitsProps> = [
   },
   {
     icon: "icon-park-solid:optimize",
-    description: "Optimize your M-Pesa activities to enhance efficiency and profitability",
+    description: "Navigate your financial data with precision and confidence",
   },
   {
     icon: "mingcute:presentation-2-fill",

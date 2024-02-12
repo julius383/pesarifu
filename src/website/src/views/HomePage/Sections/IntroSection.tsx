@@ -16,7 +16,7 @@ const IntroSection: React.FC<{}> = () => {
         >
           <div className="w-full">
             <p className="md:text-2xl text-4xl font-bold">
-              Welcome to Pesarifu, where we empower your financial decision-making through data analysis
+              Welcome to Pesarifu, where we empower your financial decision-making through data analysis.
             </p>
           </div>
         </Parallax>
