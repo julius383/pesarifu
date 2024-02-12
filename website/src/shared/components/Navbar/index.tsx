@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Button from "../Button"
 import "./navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import scrollTo from "../../functions/scrollTo";
@@ -10,14 +11,18 @@ interface MenuItem {
   type: "link" | "in-page-link";
 }
 
-const Navbar: React.FC<{}> = () => {
+interface ModalProps {
+  isOpen: boolean;
+  toggle: () => void;
+}
+
+const Navbar: React.FC<ModalProps> = ({ isOpen, toggle }) => {
   const location = useLocation();
   let navigate = useNavigate();
 
   const menuItems: MenuItem[] = [
-    { name: "Pricing", route: "/subscriptions", type: "link" },
+    // { name: "Pricing", route: "/subscriptions", type: "link" },
     { name: "Blog", route: "/blog", type: "link" },
-    { name: "Contact Us", route: "contact-us", type: "in-page-link" },
   ];
 
   const scrollToInPageLink = (link: string) => {
@@ -35,6 +40,7 @@ const Navbar: React.FC<{}> = () => {
   const handleClick = () => {
     setIsActive((current) => !current);
   };
+
 
   return (
     <nav className="w-full absolute top-0 z-30">
@@ -69,33 +75,10 @@ const Navbar: React.FC<{}> = () => {
                   )}
                 </>
               ))}
+              <Link to="#contactModal" className="font-medium text-lg" onClick={() => { handleClick(); toggle(); }}>
+                {"Contact Us"}
+              </Link>
             </div>
-
-            {/* <div className="">
-              <Button
-                id="login"
-                className=""
-                backgroundColor="transparent"
-                type="button"
-                option="rounded"
-                label="Login"
-                border="1px solid var(--appColor-dark)"
-                onClick={() => {}}
-              />
-            </div>
-            <div className="">
-              <Button
-                id="login"
-                className=""
-                backgroundColor="var(--appColor-dark)"
-                color="var(--appColor-light)"
-                type="button"
-                option="rounded"
-                label="Get Started"
-                border="1px solid var(--appColor-dark)"
-                onClick={() => {}}
-              />
-            </div> */}
           </div>
         </div>
       </div>
@@ -158,6 +141,9 @@ const Navbar: React.FC<{}> = () => {
                     </Link>
                   </>
                 ))}
+                <Link to="#contactModal" className="font-medium text-lg" onClick={() => { handleClick(); toggle(); }}>
+                  {"Contact Us"}
+                </Link>
               </div>
 
               {/* Auth buttons */}
