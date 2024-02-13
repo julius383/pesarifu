@@ -31,9 +31,7 @@ If you see `✗ orders_by_month Missing database credentials`, you need to add t
 
 - TODO: figure out how to setup demo page, maybe use nginx rewrite to demo user
   info
-- TODO: figure out how to load data into local duckdb instance
 - TODO: maybe create alternate table component
 - TODO: change header, favicon
-- TODO: prevent access to /users
 - TODO: add proxy for subscriptions
 - TODO: design and add 404 pages

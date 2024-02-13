@@ -156,7 +156,6 @@ def gen_fake(fake, cls, **kwargs):
 def gen_fake_entry(
     session: Session, transaction_count=200, same_account_ratio=0.3
 ):
-    # TODO: add items to session and save to test database
     fake = Faker()
     s = random.randint(0, 1000)
     Faker.seed(s)

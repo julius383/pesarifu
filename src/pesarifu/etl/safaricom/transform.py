@@ -21,7 +21,6 @@ class TransactionTypes(Enum):
 
 
 # @save_results("~/code/Python/pesarifu-dev/pesarifu/details-parse")
-# FIXME: handle Pay Utility Reversal by Lipa na KCB KCBAPIINITIATOR1
 def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
     details = details.strip()
     details = re.sub(r"\s+|\\", " ", details)

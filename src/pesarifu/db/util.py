@@ -19,7 +19,7 @@ def db_connector(func):
             rv = func(session, *args, **kwargs)
         except sqlalchemy.exc.SQLAlchemyError:
             session.rollback()
-            logger.error("Database connection error")
+            logger.exception("Database connection error")
             raise
         else:
             session.commit()
