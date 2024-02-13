@@ -4,7 +4,8 @@ import io
 from pathlib import Path
 from typing import Annotated, Optional
 
-from litestar import Litestar, get, post
+import sqlalchemy
+from litestar import Litestar, Request, get, post
 from litestar.config.compression import CompressionConfig
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
@@ -20,6 +21,8 @@ from pydantic import BaseModel, ConfigDict
 from toolz import update_in
 
 from pesarifu.config.config import settings
+from pesarifu.db.models import ContactRequest
+from pesarifu.db.util import Session
 from pesarifu.etl import safaricom
 from pesarifu.etl.safaricom.extract import get_metadata_from_pdf
 from pesarifu.util.helpers import decrypt_pdf, format_timestamp, logger, nothing
@@ -38,8 +41,8 @@ class ProcessItem(BaseModel):
 
 class ContactForm(BaseModel):
     name: str
-    reason: str = "unsupported_filetype"
-    decription: Optional[str] = None
+    message: str
+    reason: Optional[str] = "General Enquiry"
     contact_email: Optional[str] = None
     contact_phone: Optional[str] = None
 
@@ -88,14 +91,24 @@ async def test_error() -> Template:
     return t
 
 
-# TODO: fill in implementation
-@post("/contact-us")
-async def contact_us(
-    data: Annotated[
-        ContactForm, Body(media_type=RequestEncodingType.URL_ENCODED)
-    ]
-) -> str:
-    return ""
+@post("/contact-us", exclude_from_csrf=True)
+async def contact_us(data: ContactForm) -> str:
+    session = Session()
+    try:
+        logger.info(
+            "Received contact request",
+            requested=data.name,
+            contact=(data.contact_email or data.contact_phone),
+        )
+        session.add(ContactRequest(**data.model_dump(mode="python")))
+    except sqlalchemy.exc.SQLAlchemyError:
+        logger.exception("Could not save request", request=data)
+    else:
+        session.commit()
+    finally:
+        session.expunge_all()
+        session.close()
+    return "Request Submitted"
 
 
 # TODO: add logic to handle PDFs from multiple sources safaricom, stanchart etc
@@ -111,7 +124,9 @@ async def process_pdf(
         if not file_head.startswith(
             bytes([0x25, 0x50, 0x44, 0x46])
         ):  # PDF magic number
-            logger.error("Non PDF file passed", magic_number=file_head)
+            logger.error(
+                "Non PDF file passed", magic_number=file_head.hex(":")
+            )
             raise HTTPException(
                 detail="The submitted file is not a PDF", status_code=400
             )
@@ -136,29 +151,55 @@ async def process_pdf(
             "app_home": settings.APP_BASE_URL,
         }
         return Template(template_name="success.html", context=metadata)
-    except ValueError as e:
+    except ValueError:
         logger.exception("Unable to parse PDF as type %s", data.source)
-        raise HTTPException(
-            detail="Could not parse PDF as indicated type", status_code=400
-        ) from e
-    except KeyError as e:
+        return Template(
+            template_name="error.html",
+            context={
+                "reason": "Unable to process PDF file",
+                "app_home": settings.APP_BASE_URL,
+            },
+        )
+    except KeyError:
         logger.exception("No password provided in request")
-        raise HTTPException(
-            detail="Password required for encrypted PDF", status_code=400
-        ) from e
-    except Exception as e:
+        return Template(
+            template_name="error.html",
+            context={
+                "reason": "Password required for encrypted PDF file",
+                "app_home": settings.APP_BASE_URL,
+            },
+        )
+    except Exception:
         logger.exception("Unhandled exception occurred")
-        raise HTTPException(detail="Server Error", status_code=500) from e
+        return Template(
+            template_name="error.html",
+            context={
+                "reason": """An unknown error occurred, the admin has already been notified.\
+            Feel free to contact us directly with additional questions""",
+                "app_home": settings.APP_BASE_URL,
+            },
+        )
+
+
+async def before_request_handler(request: Request) -> Optional[dict[str, str]]:
+    body = await request.body()
+    headers = request.headers
+    logger.debug(
+        "Request received", body=body, body_type=type(body), headers=headers
+    )
+    return None
 
 
 app = Litestar(
     route_handlers=[index, contact_us, process_pdf, test_success, test_error],
     openapi_config=None,
-    cors_config=CORSConfig(allow_origins=[settings.APP_BASE_URL]),
-    csrf_config=CSRFConfig(secret=settings.CSRF_SECRET),
+    cors_config=CORSConfig(
+        allow_origins=[settings.APP_BASE_URL, settings.WEBSITE_BASE_URL]
+    ),
     compression_config=CompressionConfig(
         backend="gzip", gzip_compress_level=9
     ),
+    # before_request=before_request_handler,
     template_config=TemplateConfig(
         directory=Path(__file__).parent.parent / "templates",
         engine=JinjaTemplateEngine,

@@ -423,3 +423,17 @@ class CompanyProfile(Base):
             address=self.address,
             website=self.website,
         )
+
+
+class ContactRequest(Base):
+    __tablename__ = "contact_request"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    name: Mapped[str] = mapped_column(String(150))
+    message: Mapped[str] = mapped_column(String(500))
+    reason: Mapped[Optional[str]] = mapped_column(String(100))
+    contact_email: Mapped[Optional[str]] = mapped_column(String(50))
+    contact_phone: Mapped[Optional[str]] = mapped_column(String(30))
+    created_at: Mapped[float] = mapped_column(default=time.time)
+    isAddressed: Mapped[bool] = mapped_column(default=False)
