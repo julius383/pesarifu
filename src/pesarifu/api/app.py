@@ -40,7 +40,8 @@ class ContactForm(BaseModel):
     name: str
     reason: str = "unsupported_filetype"
     decription: Optional[str] = None
-    follow_up: Optional[str] = None
+    contact_email: Optional[str] = None
+    contact_phone: Optional[str] = None
 
 
 @get("/")
@@ -58,41 +59,36 @@ async def callback_register():
 
 @get("/test-success")
 async def test_success() -> Template:
-    try:
-        t = Template(
-            template_name="success.html",
-            context={
-                "customer_name": "John Smith",
-                "email": "johnsmith@example.org",
-                "mobile_number": "+254 700000000",
-                "date_of_statement": 1690405200.0,
-                "statement_period": {
-                    "start_ts": format_timestamp(1677618000.0),
-                    "end_ts": format_timestamp(1690405200.0),
-                },
+    t = Template(
+        template_name="success.html",
+        context={
+            "customer_name": "John Smith",
+            "email": "johnsmith@example.org",
+            "mobile_number": "+254 700000000",
+            "date_of_statement": 1690405200.0,
+            "statement_period": {
+                "start_ts": format_timestamp(1677618000.0),
+                "end_ts": format_timestamp(1690405200.0),
             },
-        )
-        return t
-    except Exception as e:
-        print(e)
-        logger.error("Error occurred", error=e)
+            "app_home": settings.APP_BASE_URL,
+        },
+    )
+    return t
 
 
 @get("/test-error")
 async def test_error() -> Template:
-    try:
-        t = Template(
-            template_name="error.html",
-            context={
-                "reason": "PDF type is not supported",
-            },
-        )
-        return t
-    except Exception as e:
-        print(e)
-        logger.error("Error occurred", error=e)
+    t = Template(
+        template_name="error.html",
+        context={
+            "reason": "PDF type is not supported",
+            "app_home": settings.APP_BASE_URL,
+        },
+    )
+    return t
 
 
+# TODO: fill in implementation
 @post("/contact-us")
 async def contact_us(
     data: Annotated[
@@ -115,7 +111,7 @@ async def process_pdf(
         if not file_head.startswith(
             bytes([0x25, 0x50, 0x44, 0x46])
         ):  # PDF magic number
-            logger.error("Non PDF file passed")
+            logger.error("Non PDF file passed", magic_number=file_head)
             raise HTTPException(
                 detail="The submitted file is not a PDF", status_code=400
             )
@@ -126,9 +122,8 @@ async def process_pdf(
         metadata = get_metadata_from_pdf(pdf_path)
         metadata["email"] = data.sendto_email
         if data.source == "mpesa-full-statement":
-            logger.info("Dispatching Task")
-            # safaricom.go(pdf_path=str(pdf_path.absolute()), metadata=metadata)
-            nothing(pdf_path=str(pdf_path.absolute()), metadata=metadata)
+            safaricom.go(pdf_path=str(pdf_path.absolute()), metadata=metadata)
+            # nothing(pdf_path=str(pdf_path.absolute()), metadata=metadata)
         else:
             raise NotImplementedError
         metadata = update_in(
@@ -137,20 +132,23 @@ async def process_pdf(
         metadata = update_in(
             metadata, ["statement_period", "end_ts"], format_timestamp
         )
+        metadata |= {
+            "app_home": settings.APP_BASE_URL,
+        }
         return Template(template_name="success.html", context=metadata)
     except ValueError as e:
-        logger.error("Unable to parse PDF as type %s", data.source)
+        logger.exception("Unable to parse PDF as type %s", data.source)
         raise HTTPException(
             detail="Could not parse PDF as indicated type", status_code=400
         ) from e
     except KeyError as e:
-        logger.error("No password provided in request")
+        logger.exception("No password provided in request")
         raise HTTPException(
             detail="Password required for encrypted PDF", status_code=400
         ) from e
     except Exception as e:
-        logger.error("An error occurred", error=e)
-        raise e
+        logger.exception("Unhandled exception occurred")
+        raise HTTPException(detail="Server Error", status_code=500) from e
 
 
 app = Litestar(

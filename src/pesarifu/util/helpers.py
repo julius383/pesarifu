@@ -1,11 +1,10 @@
 import datetime
 import functools
 import json
-import logging
+import logging.config
 import math
 import os
 import re
-import sys
 import time
 from contextlib import contextmanager
 from itertools import takewhile
@@ -30,27 +29,82 @@ def configure_logger():
         level = "INFO"
     else:
         level = level.upper()
-    log_level = getattr(logging, level)
-    shared_processors = [
-        structlog.contextvars.merge_contextvars,
-        structlog.processors.add_log_level,
-        structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S", utc=True),
-    ]
-    if sys.stderr.isatty():
-        processors = shared_processors + [
-            structlog.dev.set_exc_info,
-            structlog.processors.format_exc_info,
-            structlog.dev.ConsoleRenderer(),
-        ]
-    else:
-        processors = shared_processors + [
-            structlog.processors.dict_tracebacks,
-            structlog.processors.JSONRenderer(),
-        ]
-    structlog.configure(
-        wrapper_class=structlog.make_filtering_bound_logger(log_level),
-        processors=processors,
+    logging.config.dictConfig(
+        {
+            "version": 1,
+            "disable_existing_loggers": False,
+            "formatters": {
+                "plain": {
+                    "()": structlog.stdlib.ProcessorFormatter,
+                    "processors": [
+                        structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+                        structlog.dev.ConsoleRenderer(colors=False),
+                    ],
+                },
+                "json_formatter": {
+                    "()": structlog.stdlib.ProcessorFormatter,
+                    "processor": structlog.processors.JSONRenderer(),
+                },
+                "colored": {
+                    "()": structlog.stdlib.ProcessorFormatter,
+                    "processors": [
+                        structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+                        structlog.dev.ConsoleRenderer(colors=True),
+                    ],
+                },
+            },
+            "handlers": {
+                "default": {
+                    "level": "DEBUG",
+                    "class": "logging.StreamHandler",
+                    "formatter": "colored",
+                },
+                "file": {
+                    "level": "DEBUG",
+                    "class": "logging.handlers.WatchedFileHandler",
+                    "filename": "logs/pesarifu-text.log",
+                    "formatter": "plain",
+                },
+                "json_file": {
+                    "level": "DEBUG",
+                    "class": "logging.handlers.WatchedFileHandler",
+                    "filename": "logs/pesarifu-json.log",
+                    "formatter": "json_formatter",
+                },
+            },
+            "loggers": {
+                "": {
+                    "handlers": ["default", "file", "json_file"],
+                    "level": "DEBUG",
+                    "propagate": True,
+                },
+            },
+        }
     )
+
+    structlog.configure(
+        processors=[
+            structlog.contextvars.merge_contextvars,
+            structlog.processors.add_log_level,
+            structlog.stdlib.add_logger_name,
+            structlog.processors.TimeStamper(fmt="iso", utc=True),
+            structlog.processors.CallsiteParameterAdder(
+                [
+                    structlog.processors.CallsiteParameter.FILENAME,
+                    structlog.processors.CallsiteParameter.FUNC_NAME,
+                ]
+            ),
+            structlog.processors.dict_tracebacks,
+            structlog.processors.format_exc_info,
+            structlog.processors.StackInfoRenderer(),
+            structlog.processors.UnicodeDecoder(),
+            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+        ],
+        cache_logger_on_first_use=True,
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        wrapper_class=structlog.make_filtering_bound_logger(logging.DEBUG),
+    )
+    os.makedirs(os.path.join(settings.APP_ROOT, "logs"), exist_ok=True)
     return structlog.get_logger()
 
 
@@ -80,16 +134,16 @@ def normalize_key(key: Any) -> str:
 
 
 def convert_to_cash(v: str | float) -> float:
-    if isinstance(v, float):
-        return v
-    if isinstance(v, int):
-        return float(v)
-    if isinstance(v, str):
-        cleaned = re.sub(r"\s|[^0-9.-]", "", v)
-        return float(cleaned)
-    msg = f"Unable to convert {v} of type {type(v)} to float"
-    logger.error(msg)
-    raise ValueError(msg)
+    try:
+        if isinstance(v, float):
+            return v
+        if isinstance(v, int):
+            return float(v)
+        if isinstance(v, str):
+            cleaned = re.sub(r"\s|[^0-9.-]", "", v)
+            return float(cleaned)
+    except ValueError:
+        logger.exception(f"Unable to convert {v} of type {type(v)} to float")
 
 
 def is_header(header1: str, header2: str) -> bool:
@@ -116,15 +170,20 @@ def save_results(path: str):
                     new_path = to.with_stem(
                         f"{to.stem}-{int(time.monotonic())}"
                     )
-                    logger.info(f"{path} already exists writing to {new_path}")
+                    logger.info(
+                        f"{path} already exists writing to {new_path}",
+                        func_name=func.__name__,
+                    )
                     to = new_path
                 with open(
                     to.with_suffix(".json"), "w", encoding="utf-8"
                 ) as fp:
                     json.dump(res, fp)
-                    logger.info(f"Results written to {to}")
-            except TypeError as e:
-                logger.error("Could not encode json", e)
+                    logger.info(
+                        f"Results written to {to}", func_name=func.__name__
+                    )
+            except TypeError:
+                logger.exception("Could not encode json")
             return res
 
         return wrapper_save_output

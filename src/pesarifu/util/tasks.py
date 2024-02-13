@@ -75,7 +75,7 @@ def generate_report(session, transaction_result):
             session.add(report)
             session.commit()
     except ErrorReturnCode:
-        logger.error("Failed to rebuild evidence report")
+        logger.exception("Failed to rebuild evidence report")
     return {
         "account_id": account.id,
         "link": report_path,
