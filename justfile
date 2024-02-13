@@ -4,11 +4,11 @@ DEPLOY_LOC := "linuxuser@horo"
 
 app-run:
     # sudo systemctl start postgresql.service
-    litestar --app pesarifu.api.app:app run
+    litestar --app pesarifu.api.app:app run --host 127.0.0.1 --port 3005
 
 app-run-debug:
     # sudo systemctl start postgresql.service
-    litestar --app pesarifu.api.app:app run --debug
+    litestar --app pesarifu.api.app:app run --host 127.0.0.1 --port 3005 --debug
 
 celery-run: app-setup
     # sudo systemctl start redis.service
@@ -78,7 +78,7 @@ setup: app-setup reports-setup
 build-styles:
     npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css
 
-website-serve: build-styles app-run
+app-serve: build-styles app-run
     echo "serving website"
 
 reports-setup:
@@ -93,6 +93,15 @@ reports-build-serve:
 
 reports-serve:
     cd src/reports && npm run dev
+
+website-setup:
+    cd src/website && npm install
+
+website-build:
+    cd src/website && npm run build
+
+website-serve:
+    cd src/website && npm run start
 
 build-duckdb:
     #!/usr/bin/env bash
