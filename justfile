@@ -57,7 +57,7 @@ db-stats database:
     EOF
 
 tasks:
-    rg --pretty --max-depth 50 --glob '!justfile' 'FIXME|TODO'
+    rg --ignore-vcs --trim --max-depth 50 --glob '!justfile' 'FIXME|TODO'
 
 deploy:
     #!/usr/bin/env bash
