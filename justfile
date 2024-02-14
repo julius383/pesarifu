@@ -71,13 +71,14 @@ deploy:
     git clone https://github.com/julius383/pesarifu.git --depth 1 "$repo_dir"
     rsync --exclude-from=.gitignore --archive --compress --update --progress --cvs-exclude --verbose --perms "${repo_dir}/" {{DEPLOY_LOC}}:pesarifu
     scp -i ~/.ssh/id_ed25519 ./src/pesarifu/config/.secrets.toml {{DEPLOY_LOC}}:pesarifu/src/pesarifu/config/.secrets.toml
+    scp -i ~/.ssh/id_ed25519 ./src/static/dist/pesarifu-logo.svg {{DEPLOY_LOC}}:pesarifu/static/dist/
     rm -rf "$repo_dir"
 
 lint:
     isort src/
     black src/
 
-setup: app-setup reports-setup
+setup: app-setup reports-setup service-setup website-setup build-styles
     echo "Running setup"
 
 build-styles:

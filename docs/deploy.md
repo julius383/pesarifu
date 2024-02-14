@@ -9,6 +9,7 @@ Make sure the following tools are installed in the deployment environment
 - [x] just (task runner)
 - [ ] duckdb (OLAP engine)
 - [ ] redis (message broker and result store for celery)
+- [ ] poppler (for pdftotext)
 
 
 Optionally also install
@@ -21,7 +22,7 @@ Optionally also install
 
 ## Server Configuration
 
-- [ ] setup Let's Encrypt TLS Certificate for HTTPS
+- [x] setup Let's Encrypt TLS Certificate for HTTPS
 - [ ] setup firewall
 - [ ] setup fail2ban
 - [x] setup ssh key only login
