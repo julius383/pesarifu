@@ -25,7 +25,7 @@ backup:
 
 app-setup:
     #!/usr/bin/env bash
-    poetry install
+    env POETRY_VIRTUALENVS_IN_PROJECT=true poetry install
     npm install
     cat << EOF > .env
     export PYTHONPATH=$PYTHONPATH:$(poetry env info --path)/lib/python3.10/site-packages
@@ -33,7 +33,6 @@ app-setup:
     export APP_ROOT="$(pwd)"
     export DYNACONF_APP_ROOT="$(pwd)"
     export ROOT_PATH_FOR_DYNACONF="$(pwd)/src/pesarifu/config/"
-    export POETRY_VIRTUALENVS_IN_PROJECT=true
     EOF
     mkdir uploads exports || true
 
@@ -43,7 +42,7 @@ service-setup:
     sudo systemctl daemon-reload
 
 overview:
-    eza --hyperlink --tree --long --group-directories-first --ignore-glob __pycache__ --ignore-glob node_modules --git-ignore
+    eza --tree --long --group-directories-first --ignore-glob __pycache__ --ignore-glob node_modules --git-ignore
 
 db-stats database:
     #!/usr/bin/env bash
@@ -70,7 +69,7 @@ deploy:
     repo_dir=$(mktemp --directory)
     echo "cloning into $repo_dir"
     git clone https://github.com/julius383/pesarifu.git --depth 1 "$repo_dir"
-    rsync --exclude-from=.gitignore --archive --progress --cvs-exclude --verbose --perms "${repo_dir}/" {{DEPLOY_LOC}}:pesarifu
+    rsync --exclude-from=.gitignore --archive --compress --update --progress --cvs-exclude --verbose --perms "${repo_dir}/" {{DEPLOY_LOC}}:pesarifu
     scp -i ~/.ssh/id_ed25519 ./src/pesarifu/config/.secrets.toml {{DEPLOY_LOC}}:pesarifu/src/pesarifu/config/.secrets.toml
     rm -rf "$repo_dir"
 

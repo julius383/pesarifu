@@ -7,7 +7,7 @@ Requires=redis.service
 User=linuxuser
 WorkingDirectory=/home/linuxuser/pesarifu
 EnvironmentFile=/home/linuxuser/pesarifu/.env
-ExecStart=${APP_ROOT}/.venv/bin/celery  --app pesarifu.config.celery worker --loglevel INFO --pool=prefork --concurrency=4
+ExecStart=/home/linuxuser/pesarifu/.venv/bin/celery  --app pesarifu.config.celery worker --loglevel INFO --pool=prefork --concurrency=4
 Restart=always
 
 [Install]

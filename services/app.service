@@ -6,7 +6,7 @@ After=network.target
 User=linuxuser
 WorkingDirectory=/home/linuxuser/pesarifu
 EnvironmentFile=/home/linuxuser/pesarifu/.env
-ExecStart=${APP_ROOT}/.venv/bin/litestar --app pesarifu.api.app:app run --host 127.0.0.1 --port 3005
+ExecStart=/home/linuxuser/pesarifu/.venv/bin/litestar --app pesarifu.api.app:app run --host 127.0.0.1 --port 3005
 Restart=always
 
 [Install]
