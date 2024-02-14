@@ -34,11 +34,11 @@ app-setup:
     export DYNACONF_APP_ROOT="$(pwd)"
     export ROOT_PATH_FOR_DYNACONF="$(pwd)/src/pesarifu/config/"
     EOF
-    mkdir uploads exports || true
+    mkdir uploads exports logs || true
 
 service-setup:
-    sudo ln -s "$(pwd)/services/app.service" /etc/systemd/system/
-    sudo ln -s "$(pwd)/services/tasks.service" /etc/systemd/system/
+    -sudo ln -s "$(pwd)/services/app.service" /etc/systemd/system/
+    -sudo ln -s "$(pwd)/services/tasks.service" /etc/systemd/system/
     sudo systemctl daemon-reload
 
 overview:

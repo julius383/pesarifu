@@ -11,5 +11,7 @@ pesarifu.com {
 }
 
 app.pesarifu.com {
-    reverse_proxy :3005
+    reverse_proxy {
+        to 127.0.0.1:3005
+    }
 }
