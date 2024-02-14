@@ -33,8 +33,14 @@ app-setup:
     export APP_ROOT="$(pwd)"
     export DYNACONF_APP_ROOT="$(pwd)"
     export ROOT_PATH_FOR_DYNACONF="$(pwd)/src/pesarifu/config/"
+    export POETRY_VIRTUALENVS_IN_PROJECT=true
     EOF
     mkdir uploads exports || true
+
+service-setup:
+    sudo ln -s "$(pwd)/services/app.service" /etc/systemd/system/
+    sudo ln -s "$(pwd)/services/tasks.service" /etc/systemd/system/
+    sudo systemctl daemon-reload
 
 overview:
     eza --hyperlink --tree --long --group-directories-first --ignore-glob __pycache__ --ignore-glob node_modules --git-ignore

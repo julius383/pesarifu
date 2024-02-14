@@ -9,3 +9,7 @@ pesarifu.com {
     root * ./src/website/build
     file_server
 }
+
+app.pesarifu.com {
+    reverse_proxy :3005
+}
