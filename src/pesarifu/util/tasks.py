@@ -10,9 +10,9 @@ from toolz import groupby
 
 from pesarifu.config.celery import app
 from pesarifu.config.config import settings
+from pesarifu.db.load import get_account
 from pesarifu.db.models import WebReport
 from pesarifu.db.util import db_connector
-from pesarifu.etl.safaricom.load import get_account
 from pesarifu.util.export import export_transactions
 from pesarifu.util.helpers import cd, logger
 from pesarifu.util.notify import notify_admin, notify_local, notify_user_email
