@@ -13,6 +13,7 @@ from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.datastructures import UploadFile
 from litestar.enums import RequestEncodingType
 from litestar.exceptions import HTTPException
+from litestar.middleware.rate_limit import RateLimitConfig
 from litestar.params import Body
 from litestar.response import Template
 from litestar.static_files.config import StaticFilesConfig
@@ -25,7 +26,7 @@ from pesarifu.db.models import ContactRequest
 from pesarifu.db.util import Session
 from pesarifu.etl import safaricom
 from pesarifu.etl.safaricom.extract import get_metadata_from_pdf
-from pesarifu.util.helpers import decrypt_pdf, format_timestamp, logger, nothing
+from pesarifu.util.helpers import decrypt_pdf, format_timestamp, logger
 
 # from icecream import ic
 
@@ -190,8 +191,10 @@ async def before_request_handler(request: Request) -> Optional[dict[str, str]]:
     return None
 
 
+rate_limit_config = RateLimitConfig(rate_limit=("minute", 10))
+
 app = Litestar(
-    route_handlers=[index, contact_us, process_pdf, test_success, test_error],
+    route_handlers=[index, contact_us, process_pdf],
     openapi_config=None,
     cors_config=CORSConfig(
         allow_origins=[settings.APP_BASE_URL, settings.WEBSITE_BASE_URL]
@@ -204,6 +207,7 @@ app = Litestar(
         directory=Path(__file__).parent.parent / "templates",
         engine=JinjaTemplateEngine,
     ),
+    middleware=[rate_limit_config.middleware],
     static_files_config=[
         StaticFilesConfig(directories=["static/dist"], path="/dist")
     ],
