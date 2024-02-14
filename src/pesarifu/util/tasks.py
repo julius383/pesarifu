@@ -60,25 +60,31 @@ def generate_report(session, transaction_result):
     report_path = reduce(
         urljoin, ["reports/", rel_path], settings.REPORTS_BASE_URL
     )
-    try:
-        logger.info("Generating report on path: %s", report_path)
-        with cd(settings.APP_ROOT):
-            just("reports-build")  # see justfile in project root
-        maybe_report = session.scalars(
-            select(WebReport).where(WebReport.account_id == account.id)
-        ).one_or_none()
-        if maybe_report:
-            report = maybe_report
-        else:
-            report = WebReport(web_url=report_path, account=account)
-            # TODO: decide if worth it to generate PDF
-            session.add(report)
-            session.commit()
-    except ErrorReturnCode:
-        logger.exception("Failed to rebuild evidence report")
+    logger.info("Generating report on path: %s", report_path)
+    maybe_report = session.scalars(
+        select(WebReport).where(WebReport.account_id == account.id)
+    ).one_or_none()
+    if maybe_report:
+        report = maybe_report
+    else:
+        report = WebReport(web_url=report_path, account=account)
+        session.add(report)
+        session.commit()
     return {
         "account_id": account.id,
         "link": report_path,
         "account_name": account.account_name,
         "sendto": account.holder.email,
     }
+
+
+# FIXME: figure out way to make sure only single instance is running
+@app.task
+def rebuild_report(report: dict[str, Any]):
+    try:
+        with cd(settings.APP_ROOT):
+            just("reports-build")  # see justfile in project root
+            logger.info("Finished rebuilding report")
+    except ErrorReturnCode:
+        logger.exception("Failed to rebuild evidence report")
+    return report

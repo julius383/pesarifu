@@ -1,4 +1,3 @@
-from pesarifu.db.util import db_connector
 from pesarifu.etl.safaricom.tasks import process, setup
 from pesarifu.util.tasks import email_report, generate_report
 
