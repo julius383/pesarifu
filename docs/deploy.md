@@ -8,8 +8,8 @@ Make sure the following tools are installed in the deployment environment
 - [x] node/npm - nvm (javascript runtime and dependency manager)
 - [x] just (task runner)
 - [ ] duckdb (OLAP engine)
-- [ ] redis (message broker and result store for celery)
-- [ ] poppler (for pdftotext)
+- [x] redis (message broker and result store for celery)
+- [x] poppler (for pdftotext)
 
 
 Optionally also install
@@ -44,3 +44,4 @@ Optionally also install
 
 - https://wpjohnny.com/harden-linux-web-server/
 - https://linuxhandbook.com/things-to-do-after-installing-linux-server/
+- https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-20-04

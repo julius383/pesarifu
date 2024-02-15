@@ -12,7 +12,7 @@ app-run-debug:
 
 celery-run: app-setup
     # sudo systemctl start redis.service
-    celery --app pesarifu.config.celery worker --loglevel INFO --pool=prefork --concurrency=4
+    celery --app pesarifu.config.celery worker --loglevel INFO --pool=prefork --concurrency=4 --task-events
 
 [confirm("Are you sure want to delete everything?")]
 clean: backup
@@ -28,13 +28,17 @@ app-setup:
     env POETRY_VIRTUALENVS_IN_PROJECT=true poetry install
     npm install
     cat << EOF > .env
+    #/usr/bin/env bash
     export PYTHONPATH=$PYTHONPATH:$(poetry env info --path)/lib/python3.10/site-packages
     export ENV_FOR_DYNACONF=production
     export APP_ROOT="$(pwd)"
     export DYNACONF_APP_ROOT="$(pwd)"
     export ROOT_PATH_FOR_DYNACONF="$(pwd)/src/pesarifu/config/"
+    export CELERY_APP="pesarifu.config.celery"
+    export CELERY_PID_FILE="$(pwd)/.celery.pid"
+    export CELERY_LOG_FILE="$(pwd)/logs/celery.log"
     EOF
-    mkdir uploads exports logs || true
+    mkdir -p uploads exports logs static/dist || true
 
 service-setup:
     -sudo ln -s "$(pwd)/services/app.service" /etc/systemd/system/
@@ -71,7 +75,7 @@ deploy:
     git clone https://github.com/julius383/pesarifu.git --depth 1 "$repo_dir"
     rsync --exclude-from=.gitignore --archive --compress --update --progress --cvs-exclude --verbose --perms "${repo_dir}/" {{DEPLOY_LOC}}:pesarifu
     scp -i ~/.ssh/id_ed25519 ./src/pesarifu/config/.secrets.toml {{DEPLOY_LOC}}:pesarifu/src/pesarifu/config/.secrets.toml
-    scp -i ~/.ssh/id_ed25519 ./src/static/dist/pesarifu-logo.svg {{DEPLOY_LOC}}:pesarifu/static/dist/
+    scp -i ~/.ssh/id_ed25519 ./static/dist/pesarifu-logo.svg {{DEPLOY_LOC}}:pesarifu/static/dist/
     rm -rf "$repo_dir"
 
 lint:
