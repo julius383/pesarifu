@@ -15,7 +15,7 @@ from pesarifu.db.models import WebReport
 from pesarifu.db.util import db_connector
 from pesarifu.util.export import export_transactions
 from pesarifu.util.helpers import cd, logger
-from pesarifu.util.notify import notify_admin, notify_local, notify_user_email
+from pesarifu.util.notify import notify_admin, notify_user_email
 
 env = Environment(
     loader=PackageLoader("pesarifu"), autoescape=select_autoescape()
@@ -42,7 +42,7 @@ def notify_report(
     attachments: Optional[list] = None,
 ):
     subject = f"Report for {account_name}: {sendto}"
-    notify_local(subject, f"{link}\n {' '.join(attachments)}")
+    notify_admin(subject, f"{link}\n {' '.join(attachments)}")
     return
 
 

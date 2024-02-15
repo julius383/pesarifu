@@ -14,7 +14,6 @@ from pesarifu.util.helpers import logger
 
 apobj = apprise.Apprise()
 apobj.add(f"tgram://{settings['TELEGRAM_BOT_TOKEN']}/6081822266", tag="admin")
-apobj.add("dbus://", tag="admin-local")
 
 
 def notify_admin(subject, body):
@@ -23,16 +22,6 @@ def notify_admin(subject, body):
         title=title, body=body, tag="admin", body_format=NotifyFormat.MARKDOWN
     )
     return
-
-
-def notify_local(subject, body):
-    title = f"Update on pesarifu regarding: {subject}"
-    apobj.notify(
-        title=title,
-        body=body,
-        tag="admin-local",
-        body_format=NotifyFormat.MARKDOWN,
-    )
 
 
 def build_email(subject, body, from_, sendto, attachments):
