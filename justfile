@@ -11,8 +11,11 @@ app-run-debug:
     litestar --app pesarifu.api.app:app run --host 127.0.0.1 --port 3005 --debug
 
 celery-run: app-setup
-    # sudo systemctl start redis.service
-    celery --app pesarifu.config.celery worker --loglevel INFO --pool=prefork --concurrency=4 --task-events
+    #!/usr/bin/env bash
+    source .env
+    sudo systemctl restart redis.service
+    celery --app $CELERY_APP worker --loglevel INFO --pool=prefork --concurrency=4 --without-mingle --without-heartbeat --logfile=$CELERY_LOG_FILE --pidfile=$CELERY_PID_FILE --task-events --detach
+
 
 [confirm("Are you sure want to delete everything?")]
 clean: backup
@@ -38,6 +41,7 @@ app-setup:
     export CELERY_PID_FILE="$(pwd)/.celery.pid"
     export CELERY_LOG_FILE="$(pwd)/logs/celery.log"
     EOF
+    source .env
     mkdir -p uploads exports logs static/dist || true
 
 service-setup:
