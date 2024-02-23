@@ -141,45 +141,10 @@ select max(value) as amount_max
 from ${heatmap_data}
 ```
 
-
-<ECharts config={
-{
-  title: {
-    top: 30,
-    left: 'center',
-    text: 'Daily Transaction Activity'
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: function(params) {
-        var val = currencyFormat(params.value[1], "kes");
-        return val;
-    },
-  },
-  visualMap: {
-    min: 0,
-    max: Math.pow(10, (heatmap_stats[0].amount_max).toString().length),
-    type: 'piecewise',
-    orient: 'horizontal',
-    left: 'center',
-    top: 65
-  },
-  calendar: {
-    top: 120,
-    left: 30,
-    right: 30,
-    cellSize: ['auto', 13],
-    range: stats[0].range_end > stats[0].end_date ? [stats[0].range_start, stats[0].range_end] : [stats[0].start_date, stats[0].end_date],
-    itemStyle: {
-      borderWidth: 0.5
-    },
-    yearLabel: { show: false }
-  },
-  series: {
-    type: 'heatmap',
-    coordinateSystem: 'calendar',
-    data: heatmap_data.map(item => [item.name, item.value])
-  }
-}
-}
+<CalendarHeatmap
+  data={heatmap_data}
+  date=name
+  value=value
+  valueFmt="kes0k"
+  title='Daily Transaction Activity'
 />

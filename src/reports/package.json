@@ -16,10 +16,10 @@
   },
   "type": "module",
   "dependencies": {
-    "@evidence-dev/core-components": "^3.2.0",
+    "@evidence-dev/core-components": "^3.4.0",
     "@evidence-dev/csv": "^1.0.3",
     "@evidence-dev/duckdb": "^1.0.3",
-    "@evidence-dev/evidence": "^26.0.0",
+    "@evidence-dev/evidence": "^28.0.0",
     "@evidence-dev/postgres": "^1.0.1"
   },
   "overrides": {

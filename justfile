@@ -48,7 +48,6 @@ app-setup:
 
 service-setup:
     -sudo ln -s "$(pwd)/services/app.service" /etc/systemd/system/
-    -sudo ln -s "$(pwd)/services/tasks.service" /etc/systemd/system/
     sudo systemctl daemon-reload
 
 overview:
@@ -82,8 +81,8 @@ deploy:
     rsync --exclude-from=.gitignore --archive --compress --update --progress --cvs-exclude --verbose --perms "${repo_dir}/" {{DEPLOY_LOC}}:pesarifu
     scp -i ~/.ssh/id_ed25519 ./src/pesarifu/config/.secrets.toml {{DEPLOY_LOC}}:pesarifu/src/pesarifu/config/.secrets.toml
     scp -i ~/.ssh/id_ed25519 ./static/dist/pesarifu-logo.svg {{DEPLOY_LOC}}:pesarifu/static/dist/
-    scp -i ~/.ssh/id_ed25519 ./src/reports/sources/pesarifu_prod/connection.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
-    scp -i ~/.ssh/id_ed25519 ./src/reports/sources/pesarifu_prod/connection.options.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
+    scp -i ~/.ssh/id_ed25519 ./src/reports/.pesarifu_prod/connection.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
+    scp -i ~/.ssh/id_ed25519 ./src/reports/.pesarifu_prod/connection.options.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
     rm -rf "$repo_dir"
 
 lint:
