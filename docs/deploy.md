@@ -4,12 +4,13 @@
 
 Make sure the following tools are installed in the deployment environment
 
-- [x] python3.10/poetry (python runtime and dependency manager)
-- [x] node/npm - nvm (javascript runtime and dependency manager)
-- [x] just (task runner)
+- [ ] python3.10/poetry (python runtime and dependency manager)
+- [ ] node/npm - nvm (javascript runtime and dependency manager)
+- [ ] just (task runner)
 - [ ] duckdb (OLAP engine)
-- [x] redis (message broker and result store for celery)
-- [x] poppler (for pdftotext)
+- [ ] redis (message broker and result store for celery)
+- [ ] poppler (for pdftotext)
+- [ ] java (for tabula-py)
 
 
 Optionally also install
@@ -22,22 +23,23 @@ Optionally also install
 
 ## Server Configuration
 
-- [x] setup Let's Encrypt TLS Certificate for HTTPS
+- [ ] setup Let's Encrypt TLS Certificate for HTTPS
 - [ ] setup firewall
 - [ ] setup fail2ban
-- [x] setup ssh key only login
-- [x] setup sudo
-- [x] setup starship
+- [ ] setup ssh key only login
+- [ ] setup sudo
+- [ ] setup starship
 - [ ] setup cron schedule for `exports` and `uploads` cleanup
-- [x] disable root login
+- [ ] disable root login
 - [ ] configure log report service
-- [x] update packages
+- [ ] update packages
 - [ ] add to VPC with local computer
 
 
 ## App Configuration
 
 - Check `../README.md`
+- setup evidence config
 
 
 ## References

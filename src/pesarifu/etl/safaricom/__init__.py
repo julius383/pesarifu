@@ -1,5 +1,5 @@
 from pesarifu.etl.safaricom.tasks import process, setup
-from pesarifu.util.tasks import email_report, generate_report
+from pesarifu.util.tasks import email_report, generate_report, rebuild_report
 
 
 def go(pdf_path, metadata):
@@ -8,6 +8,7 @@ def go(pdf_path, metadata):
         setup.s(metadata["email"], pdf_path)
         | process.s(pdf_path)
         | generate_report.s()
+        | rebuild_report.s()
         | email_report.s([".csv", ".xlsx"])
     )
     chain()

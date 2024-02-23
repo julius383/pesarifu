@@ -16,6 +16,8 @@ celery-run: app-setup
     sudo systemctl restart redis.service
     celery --app $CELERY_APP worker --loglevel INFO --pool=prefork --concurrency=4 --without-mingle --without-heartbeat --logfile=$CELERY_LOG_FILE --pidfile=$CELERY_PID_FILE --task-events --detach
 
+admin-run:
+    sudo caddy reverse-proxy --from admin.pesarifu.com --to http://localhost:3000
 
 [confirm("Are you sure want to delete everything?")]
 clean: backup
@@ -80,6 +82,8 @@ deploy:
     rsync --exclude-from=.gitignore --archive --compress --update --progress --cvs-exclude --verbose --perms "${repo_dir}/" {{DEPLOY_LOC}}:pesarifu
     scp -i ~/.ssh/id_ed25519 ./src/pesarifu/config/.secrets.toml {{DEPLOY_LOC}}:pesarifu/src/pesarifu/config/.secrets.toml
     scp -i ~/.ssh/id_ed25519 ./static/dist/pesarifu-logo.svg {{DEPLOY_LOC}}:pesarifu/static/dist/
+    scp -i ~/.ssh/id_ed25519 ./src/reports/sources/pesarifu_prod/connection.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
+    scp -i ~/.ssh/id_ed25519 ./src/reports/sources/pesarifu_prod/connection.options.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
     rm -rf "$repo_dir"
 
 lint:
