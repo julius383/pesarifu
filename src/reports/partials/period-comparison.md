@@ -147,4 +147,5 @@ from ${heatmap_data}
   value=value
   valueFmt="kes0k"
   title='Daily Transaction Activity'
+  subtitle='Total transaction value for each day'
 />
