@@ -10,6 +10,10 @@ pesarifu.com {
 	file_server
 }
 
+app.pesarifu.com/demo {
+	redir {$REPORTS_DEMO_URL}
+}
+
 app.pesarifu.com {
 	reverse_proxy {
 		to http://127.0.0.1:3005

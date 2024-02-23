@@ -83,6 +83,7 @@ deploy:
     scp -i ~/.ssh/id_ed25519 ./static/dist/pesarifu-logo.svg {{DEPLOY_LOC}}:pesarifu/static/dist/
     scp -i ~/.ssh/id_ed25519 ./src/reports/.pesarifu_prod/connection.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
     scp -i ~/.ssh/id_ed25519 ./src/reports/.pesarifu_prod/connection.options.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
+    scp -i ~/.ssh/id_ed25519 ./src/reports/.evidence/customization/custom-formatting.json {{DEPLOY_LOC}}:pesarifu/src/reports/.evidence/customization/
     rm -rf "$repo_dir"
 
 lint:

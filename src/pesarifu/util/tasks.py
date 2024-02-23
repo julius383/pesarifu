@@ -56,10 +56,8 @@ def admin_report(subject, body):
 @db_connector
 def generate_report(session, transaction_result):
     account = get_account(session, transaction_result["account_id"])
-    rel_path = account.holder.uuid.hex
-    report_path = reduce(
-        urljoin, ["reports/", rel_path], settings.REPORTS_BASE_URL
-    )
+    rel_path = str(account.holder.uuid)
+    report_path = reduce(urljoin, ["/", rel_path], settings.REPORTS_BASE_URL)
     logger.info("Generating report on path: %s", report_path)
     maybe_report = session.scalars(
         select(WebReport).where(WebReport.account_id == account.id)

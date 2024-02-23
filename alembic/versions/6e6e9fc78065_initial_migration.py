@@ -174,4 +174,5 @@ def downgrade() -> None:
     op.drop_table('currency')
     op.drop_table('company_profile')
     op.drop_table('account_provider')
+    op.execute('DROP TYPE orgtype;')
     # ### end Alembic commands ###

@@ -18,4 +18,4 @@ WEBSITE_BASE_URL = "http://localhost:3000/"
 [production]
 APP_BASE_URL = "https://app.pesarifu.com/"
 REPORTS_BASE_URL = "https://reports.pesarifu.com/"
-WEBSITE_BASE_URL = "https://pesarifu.com"
+WEBSITE_BASE_URL = "https://pesarifu.com/"
