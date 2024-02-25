@@ -149,6 +149,7 @@ scratch.py
 *.duckdb
 src/reports/.evidence/
 src/reports/.vscode/
+src/reports/.pesarifu_prod/
 # Ignore dynaconf secret files
 .secrets.*
 logs/

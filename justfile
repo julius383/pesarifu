@@ -73,17 +73,24 @@ db-stats database:
 tasks:
     rg --ignore-vcs --trim --max-depth 50 --glob '!justfile' 'FIXME|TODO'
 
+deploy-caddy:
+
+
 deploy:
     #!/usr/bin/env bash
     repo_dir=$(mktemp --directory)
     echo "cloning into $repo_dir"
     git clone https://github.com/julius383/pesarifu.git --depth 1 "$repo_dir"
-    rsync --exclude-from=.gitignore --archive --compress --update --progress --cvs-exclude --verbose --perms "${repo_dir}/" {{DEPLOY_LOC}}:pesarifu
+    sd '^\s+# redir.*$' "\tredir /demo $(cat .demo)" "$repo_dir/Caddyfile"
+    rsync --exclude-from=.gitignore --archive --compress --update --progress --cvs-exclude \
+        --verbose --perms "${repo_dir}/" {{DEPLOY_LOC}}:pesarifu
+
     scp -i ~/.ssh/id_ed25519 ./src/pesarifu/config/.secrets.toml {{DEPLOY_LOC}}:pesarifu/src/pesarifu/config/.secrets.toml
     scp -i ~/.ssh/id_ed25519 ./static/dist/pesarifu-logo.svg {{DEPLOY_LOC}}:pesarifu/static/dist/
     scp -i ~/.ssh/id_ed25519 ./src/reports/.pesarifu_prod/connection.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
     scp -i ~/.ssh/id_ed25519 ./src/reports/.pesarifu_prod/connection.options.yaml {{DEPLOY_LOC}}:pesarifu/src/reports/sources/pesarifu/
     scp -i ~/.ssh/id_ed25519 ./src/reports/.evidence/customization/custom-formatting.json {{DEPLOY_LOC}}:pesarifu/src/reports/.evidence/customization/
+
     rm -rf "$repo_dir"
 
 lint:
