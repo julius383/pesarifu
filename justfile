@@ -73,8 +73,6 @@ db-stats database:
 tasks:
     rg --ignore-vcs --trim --max-depth 50 --glob '!justfile' 'FIXME|TODO'
 
-deploy-caddy:
-
 
 deploy:
     #!/usr/bin/env bash
