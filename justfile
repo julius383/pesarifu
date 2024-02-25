@@ -2,6 +2,9 @@
 
 DEPLOY_LOC := "linuxuser@horo"
 
+default:
+    just --choose
+
 app-run:
     # sudo systemctl start postgresql.service
     litestar --app pesarifu.api.app:app run --host 127.0.0.1 --port 3005
@@ -97,6 +100,9 @@ lint:
 
 setup: app-setup reports-setup service-setup website-setup build-styles
     echo "Running setup"
+
+build: reports-build website-build
+    echo "Done building project"
 
 build-styles:
     npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css
