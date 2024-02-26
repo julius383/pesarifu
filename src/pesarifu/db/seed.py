@@ -1,12 +1,15 @@
+import os
 import random
 import sys
 from functools import partial
 from math import ceil
 from operator import methodcaller
+from uuid import UUID
 
 import sqlalchemy
 from faker import Faker
 from icecream import ic
+from rich.prompt import Confirm
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from toolz import compose, concat
@@ -65,9 +68,19 @@ def fake_transactionalaccount(fake: Faker):
     return {"account_name": fake.unique.company}
 
 
+def fake_kenyan_name(fake: Faker):
+    with open(
+        os.path.join(settings.APP_ROOT, "examples/kenyan_names.txt")
+    ) as fp:
+        surnames = fp.readlines()
+        surname = random.choice(surnames).strip()
+        firstname = fake.first_name()
+        return f"{firstname} {surname}"
+
+
 def fake_mobilemoneyaccount(fake: Faker):
     return {
-        "account_name": fake.name,
+        "account_name": partial(fake_kenyan_name, fake),
         "maybe_number": partial(fake.numerify, "+254 7########"),
         "phone_number": "maybe_number",
     }
@@ -91,10 +104,12 @@ def fake_safaricombuygoodsaccount(fake: Faker):
 def fake_useraccount(fake: Faker, email=None, phone_number=None):
     return {
         "email": fake.unique.email if email is None else email,
-        "username": fake.name,
-        "phone_number": partial(fake.numerify, "+254 #########")
-        if phone_number is None
-        else phone_number,
+        "username": partial(fake_kenyan_name, fake),
+        "phone_number": (
+            partial(fake.numerify, "+254 #########")
+            if phone_number is None
+            else phone_number
+        ),
     }
 
 
@@ -118,9 +133,11 @@ def fake_transaction(fake: Faker, credit_ratio=0.55):
     weights2 = [20, 8, 15, 10, 7, 5, 3]
     amount_calc = random_weighted_range(ranges, weights2)
     return {
-        "amount": lambda: -(amount_calc())
-        if random.random() < credit_ratio
-        else amount_calc(),
+        "amount": lambda: (
+            -(amount_calc())
+            if random.random() < credit_ratio
+            else amount_calc()
+        ),
         "initiated_at": compose(
             methodcaller("timestamp"),
             partial(fake.date_time_between, start_date="-1y"),
@@ -154,13 +171,21 @@ def gen_fake(fake, cls, **kwargs):
 
 
 def gen_fake_entry(
-    session: Session, transaction_count=200, same_account_ratio=0.3
+    session: Session, transaction_count=200, same_account_ratio=0.3, demo=False
 ):
     fake = Faker()
     s = random.randint(0, 1000)
     Faker.seed(s)
     print(f"Populating database with seed: {s}")
-    user = gen_fake(fake, UserAccount)
+    if demo:
+        user = UserAccount(
+            username="John Mwangi",
+            email="johnmwangi@example.org",
+            uuid=UUID("7568c55f-6685-45d3-9d7b-7d9e226994fb"),
+            phone_number=fake.numerify("+254 #########"),
+        )
+    else:
+        user = gen_fake(fake, UserAccount)
     provider = gen_fake(fake, Provider)
     # ic(user)
     session.add(user)
@@ -182,7 +207,18 @@ def gen_fake_entry(
             ]
         )
     )
-    tacc = gen_fake(fake, MobileMoneyAccount, provider=provider, holder=user)
+    if demo:
+        tacc = MobileMoneyAccount(
+            provider=provider,
+            holder=user,
+            maybe_number=user.phone_number,
+            phone_number=user.phone_number,
+            account_name=user.username,
+        )
+    else:
+        tacc = gen_fake(
+            fake, MobileMoneyAccount, provider=provider, holder=user
+        )
     session.add(tacc)
     picked = []
     for _ in range(transaction_count):
@@ -209,4 +245,9 @@ def gen_fake_entry(
 if __name__ == "__main__":
     engine = create_engine(settings["DB_URL"], echo=True)
     session = Session(engine)
-    gen_fake_entry(session, transaction_count=320, same_account_ratio=0.4)
+    gen_fake_entry(
+        session,
+        transaction_count=320,
+        same_account_ratio=0.4,
+        demo=Confirm.ask("Use demo account?"),
+    )
