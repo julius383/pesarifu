@@ -97,6 +97,7 @@ deploy:
 lint:
     isort src/
     black src/
+    caddy fmt --overwrite
 
 setup: app-setup reports-setup service-setup website-setup build-styles
     echo "Running setup"
