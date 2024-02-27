@@ -22,6 +22,7 @@ const Navbar: React.FC<ModalProps> = ({ isOpen, toggle }) => {
 
   const menuItems: MenuItem[] = [
     // { name: "Pricing", route: "/subscriptions", type: "link" },
+    { name: "Home", route: "/", type: "link" },
     { name: "Blog", route: "/blog", type: "link" },
   ];
 
@@ -59,7 +60,7 @@ const Navbar: React.FC<ModalProps> = ({ isOpen, toggle }) => {
                 <>
                   {item.type === "link" ? (
                     <>
-                      <Link to={item.route} className="font-medium text-lg">
+                      <Link to={item.route} className="font-medium text-lg" >
                         {item.name}
                       </Link>
                     </>
@@ -87,7 +88,7 @@ const Navbar: React.FC<ModalProps> = ({ isOpen, toggle }) => {
       <div className="md-min:hidden p-5 w-full flex flex-row justify-between">
         <div className="w-full px-5 py-2 flex flex-row justify-between items-center rounded-full appBgColorLight navChipBorder">
           <Link to="/">
-            <img src={logo} alt="logo" className="object-none w-28 h-8" />
+            <img src={logo} alt="logo" className="object-none w-20 h-5" />
           </Link>
           <button onClick={handleClick}>
             <svg
@@ -134,9 +135,13 @@ const Navbar: React.FC<ModalProps> = ({ isOpen, toggle }) => {
               </button>
               {/* Menu items */}
               <div className="flex flex-col gap-5">
+                <Link to="/" className="mb-3" onClick={handleClick}>
+                  <img src={logo} alt="logo" className="w-28 h-12" />
+                </Link>
+                <hr/>
                 {menuItems.map((item: MenuItem, index: number) => (
                   <>
-                    <Link to={item.route} className="font-medium text-lg">
+                    <Link to={item.route} className="font-medium text-lg" onClick={handleClick}>
                       {item.name}
                     </Link>
                   </>

@@ -144,7 +144,7 @@ const ContactModal: React.FC<ModalProps> = ({ isOpen, toggle }) => {
             >
                 <div className="max-w-[1536px] w-full flex md:flex-col justify-center align-items flex-col gap-5 md:px-5 px-10 py-5">
                     <div className="w-full flex flex-col">
-                        <p className="md:text-l text-xl font-bold">
+                        <p className="md:text-l text-xl font-bold mt-2">
                             Any questions? Feel free to contact us
                         </p>
 
@@ -171,6 +171,7 @@ const ContactModal: React.FC<ModalProps> = ({ isOpen, toggle }) => {
               ))}
             </div> */}
                     </div>
+                    <hr />
 
                     <div className="w-full flex flex-col">
                         <form
