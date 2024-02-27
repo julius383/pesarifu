@@ -69,13 +69,13 @@
 	import { dev } from '$app/environment';
 	import {
 		LoadingSkeleton,
-		Sidebar,
 		BreadCrumbs,
-		Header,
 		TableOfContents,
 		QueryStatus,
 		ToastWrapper
 	} from '@evidence-dev/core-components';
+    import Header from '$lib/MyHeader.svelte'
+    import Sidebar from '$lib/MySidebar.svelte'
 	const prefetchStrategy = dev ? 'tap' : 'hover';
 
 	let mobileSidebarOpen = false;

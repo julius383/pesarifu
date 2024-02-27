@@ -42,6 +42,8 @@ where
     debit_sum = (select max(debit_sum) from ${period_trunced})
 ```
 
+### Transaction Patterns Over Time
+
 {#if inputs.relevant_period == "month"}
 
 For the transactions beginning _{fmt(period_trunced[0].period, 'longdate')}_
@@ -97,10 +99,13 @@ into
 
 ```
 
+
+<div class="print:hidden">
 <Dropdown name=relevant_period defaultValue={ distinct_months.length > 2 ? "month" : "week" } >
     <DropdownOption value="month" valueLabel="Monthly"/>
     <DropdownOption value="week" valueLabel="Weekly" />
 </Dropdown>
+</div>
 
 
 <BarChart

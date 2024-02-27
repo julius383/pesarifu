@@ -108,12 +108,8 @@ group by trunced_date
 </LineChart>
 
 
-### Transaction Patterns Over Time
 
 {@partial "period-comparison.md"}
-
-
-### Account Activity Examination
 
 {@partial "account-comparison.md"}
 

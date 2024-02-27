@@ -11,6 +11,8 @@ group by account_name
 order by sum_credit desc
 ```
 
+### Account Activity Examination
+
 Notably, the account _{credits[0].account_name}_ recorded the highest credit
 activity, totaling **{fmt(credits[0].sum_credit, "kes0k")}** and constituting
 **{fmt(credits[0].credit_percent, "num2")}%** of all credit transactions.
@@ -160,6 +162,7 @@ For the top 25 recurrent debit and credit transactions:
     xAxisTitle=true
     yAxisTitle=true
     tooltipTitle=account_name
+    opacity=0.5
     colorPalette={
         [
         '#228b22',
