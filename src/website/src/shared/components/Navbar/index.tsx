@@ -76,7 +76,7 @@ const Navbar: React.FC<ModalProps> = ({ isOpen, toggle }) => {
                   )}
                 </>
               ))}
-              <Link to="#contactModal" className="font-medium text-lg" onClick={() => { handleClick(); toggle(); }}>
+              <Link to="#contactModal" className="font-medium font-semibold text-lg" onClick={() => { handleClick(); toggle(); }}>
                 {"Contact Us"}
               </Link>
             </div>
