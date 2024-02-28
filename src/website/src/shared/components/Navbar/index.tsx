@@ -60,14 +60,14 @@ const Navbar: React.FC<ModalProps> = ({ isOpen, toggle }) => {
                 <>
                   {item.type === "link" ? (
                     <>
-                      <Link to={item.route} className="font-medium text-lg" >
+                      <Link to={item.route} className="font-semibold text-lg" >
                         {item.name}
                       </Link>
                     </>
                   ) : (
                     <>
                       <p
-                        className="font-medium text-lg cursor-pointer"
+                        className="font-semibold text-lg cursor-pointer"
                         onClick={() => scrollToInPageLink(item.route)}
                       >
                         {item.name}

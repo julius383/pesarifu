@@ -20,7 +20,7 @@ const MainLayout: React.FC<{}> = () => {
         <Outlet />
       </div>
 
-      <div className="w-full h-screen bottom-0 sticky -z-20">
+      <div className="w-full h-[28rem] md:h-[50rem] bottom-0">
         <Footer />
       </div>
       <div className="w-full">
