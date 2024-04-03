@@ -117,6 +117,7 @@ reports-setup:
 reports-build:
     cd src/reports && npm run sources
     cd src/reports && npm run build
+    echo "User-agent: *\nDisallow: /" > src/reports/build/robots.txt
 
 reports-build-serve:
     cd src/reports/ && npm run preview

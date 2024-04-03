@@ -19,7 +19,7 @@ from pypdf import PdfReader, PdfWriter
 
 # from icecream import ic
 from thefuzz import fuzz
-from toolz import keyfilter
+from toolz import keyfilter, pipe
 
 from pesarifu.config.config import settings
 
@@ -133,7 +133,13 @@ def normalize_key(key: Any) -> str:
     )
 
 
-def convert_to_cash(v: str | float) -> float:
+def normalize_name(name: str) -> str:
+    return pipe(
+        name, lambda x: re.sub(r"lull", "", x, re.IGNORECASE), str.title
+    )
+
+
+def convert_to_cash(v: str | float) -> Optional[float]:
     try:
         if isinstance(v, float):
             return v
@@ -233,6 +239,8 @@ def read_pdf(
         if len(table.columns) != len(columns_xcoords):
             continue
         table.columns = column_names
+        if join_consecutive_on:
+            table.dropna(subset=[join_consecutive_on], inplace=True)
         records = table.to_dict("records")
         rec_width = len(columns_xcoords)
         index = 0

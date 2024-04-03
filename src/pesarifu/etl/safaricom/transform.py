@@ -141,27 +141,51 @@ def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
 
 
 def parse_date(date: str) -> float:
+    months = {
+        "Jan": 1,
+        "Feb": 2,
+        "Mar": 3,
+        "Apr": 4,
+        "May": 5,
+        "Jun": 6,
+        "Jul": 7,
+        "Aug": 8,
+        "Sep": 9,
+        "Oct": 10,
+        "Nov": 11,
+        "Dec": 12,
+    }
     "Parse date format found in Mpesa statement header"
     p = re.compile(
-        r"(?P<day>\d{2})[a-z]{2}\s+(?P<month>\d+)\s+(?P<year>\d{4})"
+        r"(?P<day>\d{2})(?:[a-z]{2})?\s+(?P<month>\d+|\w{3})\s+(?P<year>\d{4})"
     )
     match = re.match(p, date)
     if match:
+        year = int(match.group("year"))
+        try:
+            month = int(match.group("month"))
+        except ValueError:
+            month = int(months[match.group("month")])
+        day = int(match.group("day"))
         return datetime(
-            year=int(match.group("year")),
-            month=int(match.group("month")),
-            day=int(match.group("day")),
+            year=year,
+            month=month,
+            day=day,
         ).timestamp()
     raise ParseError(f"{date} does not match expected pattern {p}")
 
 
 def parse_phone(number: str) -> str:
     "Parse mobile number found in Mpesa statement"
-    p = re.compile(r"(?P<code>\d{3})(?P<number>\d{9})")
-    match = re.match(p, number)
-    if match:
-        return f"+{match.group('code')} {match.group('number')}"
-    raise ParseError(f"{number} does not match expected pattern {p}")
+    p1 = re.compile(r"(?P<code>\d{3})(?P<number>\d{9})")
+    p2 = re.compile(r"(?P<code>0)(?P<number>\d{9})")
+    for p in [p1, p2]:
+        match = re.match(p, number)
+        if match:
+            code = match.group("code") if match.group("code") != "0" else "254"
+            phone = match.group("number")
+            return f"+{code} {phone}"
+    raise ParseError(f"{number} does not match expected pattern")
 
 
 def transform_pdf_record(record):

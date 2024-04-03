@@ -232,6 +232,7 @@ def gen_fake_entry(
             picked.append(other)
         session.add(other)
         session.commit()
+        # TODO: add progress indicator
         # TODO: add separate handler for faker generator and object instantiotion args
         tx = gen_fake(
             fake, Transaction, owner_account=tacc, participant_account=other

@@ -4,13 +4,15 @@
 
 Make sure the following tools are installed in the deployment environment
 
-- [ ] python3.10/poetry (python runtime and dependency manager)
-- [ ] node/npm - nvm (javascript runtime and dependency manager)
-- [ ] just (task runner)
+- [x] python3.10/poetry (python runtime and dependency manager)
+- [x] node/npm - nvm (javascript runtime and dependency manager)
+- [x] just (task runner)
 - [ ] duckdb (OLAP engine)
-- [ ] redis (message broker and result store for celery)
-- [ ] poppler (for pdftotext)
-- [ ] java (for tabula-py)
+- [x] redis (message broker and result store for celery)
+- [x] poppler-utils (for pdftotext)
+- [x] java (for tabula-py)
+- [x] caddy (web server)
+- [x] postgresql-devel (libpq-dev)
 
 
 Optionally also install
@@ -18,22 +20,23 @@ Optionally also install
 - eza (better `ls`)
 - ripgrep (better `grep`)
 - bat (better cat)
-- fzf (fuzzy finder)
+- fzf (fuzzy finder) - install script
 
 
 ## Server Configuration
 
 - [ ] setup Let's Encrypt TLS Certificate for HTTPS
-- [ ] setup firewall
+- [x] setup firewall
 - [ ] setup fail2ban
-- [ ] setup ssh key only login
-- [ ] setup sudo
-- [ ] setup starship
+- [x] setup ssh key only login
+- [x] setup sudo
+- [x] setup starship
 - [ ] setup cron schedule for `exports` and `uploads` cleanup
 - [ ] disable root login
 - [ ] configure log report service
-- [ ] update packages
+- [x] update packages
 - [ ] add to VPC with local computer
+- [x] create .demo file with url for report demo
 
 
 ## App Configuration

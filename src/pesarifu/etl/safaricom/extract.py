@@ -5,7 +5,7 @@ from typing import Any, Dict
 from sh import ErrorReturnCode, pdftotext, sed
 
 from pesarifu.etl.safaricom.transform import parse_date, parse_phone
-from pesarifu.util.helpers import normalize_key, read_pdf, save_results
+from pesarifu.util.helpers import normalize_key, normalize_name, read_pdf, save_results
 
 
 # @save_results("~/code/Python/pesarifu-dev/pesarifu/transactions")
@@ -32,6 +32,7 @@ def get_transactions_from_pdf(path: Path) -> list[Dict[str, Any]]:
             "Balance",
         ],
         join_consecutive_on="details",
+        # pages="1-3",
     )
     return records
 
@@ -45,7 +46,7 @@ def get_metadata_from_pdf(path: Path) -> dict[str, Any]:
             "-E",
             "-n",
             "-e",
-            "/^MPESA FULL STATEMENT/,/^SUMMARY/p",
+            "/.*PESA.*STATEMENT/,/^SUMMARY/p",
             _in=pdftotext("-f", 1, "-l", 1, path, "-"),
         )
     except ErrorReturnCode as e:
@@ -54,15 +55,16 @@ def get_metadata_from_pdf(path: Path) -> dict[str, Any]:
         raise ValueError
     lines: list[str] = output.strip().split("\n")
     cleaned_lines = list(filter(bool, lines[1:-2]))
-    if len(cleaned_lines) % 2 != 0:
-        raise ValueError
-    mid = len(cleaned_lines) // 2
-    metadata: dict[str, Any] = dict(
-        zip(map(normalize_key, cleaned_lines[:mid]), cleaned_lines[mid:])
-    )
-    metadata["customer_name"] = str.title(metadata["customer_name"])
+    keys = list(filter(lambda x: x.endswith(":"), cleaned_lines))
+    values = list(filter(lambda x: not x in keys, cleaned_lines))
+    metadata: dict[str, Any] = dict(zip(map(normalize_key, keys), values))
+    metadata["customer_name"] = normalize_name(metadata["customer_name"])
     metadata["mobile_number"] = parse_phone(metadata["mobile_number"])
-    metadata["date_of_statement"] = parse_date(metadata["date_of_statement"])
+    metadata["date_of_statement"] = (
+        parse_date(metadata["date_of_statement"])
+        if "date_of_statement" in metadata.keys()
+        else parse_date(metadata["request_date"])
+    )
     start, end = metadata["statement_period"].split(" - ")
     metadata["statement_period"] = {
         "start_ts": parse_date(start),
