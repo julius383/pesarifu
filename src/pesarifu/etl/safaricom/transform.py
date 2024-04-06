@@ -1,14 +1,17 @@
+import os
 import re
 from datetime import datetime, timezone
 from enum import Enum, auto
+from functools import reduce
+from operator import or_
 from typing import Dict, Optional
 
 from dateutil.parser import isoparse
-
-# from icecream import ic
+from icecream import ic
+from lark import Lark, Token, Transformer, UnexpectedCharacters
 from toolz import pipe
 
-from pesarifu.util.helpers import ParseError, convert_to_cash, logger
+from pesarifu.util.helpers import ParseError, convert_to_cash, logger, omit
 
 # TODO: align fields in JSON and PDF extract
 
@@ -20,124 +23,117 @@ class TransactionTypes(Enum):
     SAFARICOM_TRANSFER = auto()
 
 
-# @save_results("~/code/Python/pesarifu-dev/pesarifu/details-parse")
-def parse_details(details: str) -> tuple[TransactionTypes, dict[str, str]]:
-    details = details.strip()
-    details = re.sub(r"\s+|\\", " ", details)
-    re_flags = re.IGNORECASE
-    patterns = [
-        (
-            TransactionTypes.MOBILE_TRANSFER,
-            re.compile(
-                r"Customer Transfer to (?P<maybe_number>[*0-9]{10,12}) - (?P<account_name>.*)$",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.MOBILE_TRANSFER,
-            re.compile(
-                r"Funds received from (?P<maybe_number>[*0-9]{10,12}) - (?P<account_name>.*)$",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.MOBILE_TRANSFER,
-            re.compile(
-                r"Send Money Reversal via API to (?P<maybe_number>[*0-9]{10,12}) - (?P<account_name>.*)$",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.BUYGOODS_TRANSFER,
-            re.compile(
-                r"Merchant Payment (?:Online )?to (?P<buygoods_number>[0-9]{6,8}) - (?P<account_name>.*)$",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.MOBILE_TRANSFER,
-            re.compile(
-                r"Customer Payment to Small Business to (?P<maybe_number>[*0-9]{10,12}) - (?P<account_name>.*)$",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.PAYBILL_TRANSFER,
-            re.compile(
-                r"Pay Bill (?:Online )?to (?P<paybill_number>[0-9]{6,8}) - (?P<account_name>(?:.+\s+)+)Acc\.\s+(?P<account_number>.+)$",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.BUYGOODS_TRANSFER,
-            re.compile(
-                r"(?:Business|Salary|Promotion) Payment from (?P<buygoods_number>[0-9]{6,8}) - (?P<account_name>(?:.+\s+)+)via (?P<detail>.*).$",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.SAFARICOM_TRANSFER,
-            re.compile(
-                r"(?P<purpose>Pay Utility Reversal.*)",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.SAFARICOM_TRANSFER,
-            re.compile(
-                r"(?P<purpose>Customer Transfer of Funds Charge)",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.SAFARICOM_TRANSFER,
-            re.compile(
-                r"(?P<purpose>Airtime Purchase)",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.SAFARICOM_TRANSFER,
-            re.compile(
-                r"(?P<purpose>Pay Bill Charge)",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.SAFARICOM_TRANSFER,
-            re.compile(
-                r"(?P<purpose>Withdrawal Charge)",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.SAFARICOM_TRANSFER,
-            re.compile(
-                r"(?P<purpose>Buy Bundles Online)",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.SAFARICOM_TRANSFER,
-            re.compile(
-                r"(?P<purpose>M-Shwari (?:Withdraw|Deposit))",
-                re_flags,
-            ),
-        ),
-        (
-            TransactionTypes.SAFARICOM_TRANSFER,
-            re.compile(
-                r"^(?P<purpose>Customer Withdrawal .*)",
-                re_flags,
-            ),
-        ),
-    ]
+class DetailTransformer(Transformer):
+    def detail(self, item):
+        return item[0]
 
-    for k, v in patterns:
-        match = re.match(v, details)
-        if match:
-            return k, match.groupdict()
-    raise ParseError(details)
+    def mobile_transfer(self, account_info):
+        account_info = list(
+            filter(lambda x: not isinstance(x, Token), account_info)
+        )
+        return reduce(or_, account_info)
+
+    def buygoods(self, account_info):
+        account_info = reduce(
+            or_, list(filter(lambda x: not isinstance(x, Token), account_info))
+        )
+        d = omit(["business_number"], account_info)
+        d["buygoods_number"] = account_info["business_number"]
+        return d
+
+    def paybill(self, account_info):
+        account_info = reduce(
+            or_, list(filter(lambda x: not isinstance(x, Token), account_info))
+        )
+        d = omit(["business_number"], account_info)
+        d["paybill_number"] = account_info["business_number"]
+        return d
+
+    def business_number(self, item):
+        item = item[0].value
+        return {
+            "business_number": pipe(
+                item,
+                str.strip,
+            )
+        }
+
+    def account_number(self, item):
+        item = item[0].value
+        return {
+            "account_number": pipe(
+                item,
+                str.strip,
+            )
+        }
+
+    def extra_detail(self, item):
+        item = item[0].value
+        return {
+            "extra": {
+                "via": pipe(
+                    item,
+                    str.strip,
+                )
+            }
+        }
+
+    def reason(self, item):
+        item = item[0].value
+        return {
+            "purpose": pipe(
+                item,
+                str.strip,
+            )
+        }
+
+    def account_name(self, item):
+        item = item[0].value
+        return {
+            "account_name": pipe(
+                item,
+                str.lower,
+                lambda x: re.sub(
+                    r"(?:^|\s)([a-zA-Z])",
+                    lambda x: str.upper(x.group(0)),
+                    x,
+                ),  # Better Title Case than str.title
+                lambda x: re.sub(r"null", "", x, re.IGNORECASE),
+                str.strip,
+            )
+        }
+
+    def maybe_number(self, item):
+        item = item[0].value
+        d = {}
+        if not re.search(r"\*\*\*", item):
+            d["phone_number"] = item
+        d["maybe_number"] = pipe(
+            item,
+            str.strip,
+            lambda x: re.sub(r"^0", "254", x),
+            lambda x: re.sub(r"^7", "2547", x),
+        )
+        return d
+
+
+def make_parser():
+    with open(
+        os.path.join(os.path.dirname(__file__), "details_grammar.ebnf"), "r"
+    ) as fp:
+        grammar = fp.read()
+        parser = Lark(grammar, start="detail")
+    return parser
+
+
+def parse_details(details):
+    parser = make_parser()
+    t = DetailTransformer()
+    r = t.transform(parser.parse(details))
+    return r
+
+
+# @save_results("~/code/Python/pesarifu-dev/pesarifu/details-parse")
 
 
 def parse_date(date: str) -> float:
@@ -199,45 +195,12 @@ def transform_pdf_record(record):
             "balance_at": convert_to_cash(record["balance"]),
         },
     }
+    transaction["initiated_at"] = (
+        transaction["initiated_at"].replace(tzinfo=timezone.utc).timestamp()
+    )
     try:
-        ttype, info = parse_details(record["details"])
-        transaction["initiated_at"] = (
-            transaction["initiated_at"]
-            .replace(tzinfo=timezone.utc)
-            .timestamp()
-        )
-        match ttype:
-            case TransactionTypes.MOBILE_TRANSFER:
-                info["maybe_number"] = pipe(
-                    info["maybe_number"],
-                    str.lower,
-                    lambda x: re.sub(
-                        r"(?:^|\s)([a-zA-Z])",
-                        lambda x: str.upper(x.group(0)),
-                        x,
-                    ),  # Better Title Case than str.title
-                    lambda x: re.sub(r"^0", "254", x),
-                    lambda x: re.sub(r"^7", "2547", x),
-                )
-                if not re.search(r"\*\*\*", info["maybe_number"]):
-                    info["phone_number"] = info["maybe_number"]
-                if re.search(
-                    r"small business",
-                    transaction["original_detail"],
-                    flags=re.IGNORECASE,
-                ):
-                    transaction["extra"]["pochi_la_biashara"] = True
-                info["account_name"] = pipe(
-                    info["account_name"], str.strip, str.title
-                )
-            case (
-                TransactionTypes.BUYGOODS_TRANSFER
-                | TransactionTypes.PAYBILL_TRANSFER
-            ):
-                info["account_name"] = pipe(info["account_name"], str.strip)
-            case TransactionTypes.SAFARICOM_TRANSFER:
-                transaction["purpose"] = info["purpose"]
-    except ParseError as e:
+        info = parse_details(record["details"])
+    except UnexpectedCharacters:
         logger.warning("Unable to parse record %s", record)
         return
     transaction["other_account"] = info
