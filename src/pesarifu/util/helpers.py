@@ -119,6 +119,10 @@ def pick(whitelist, d):
     return keyfilter(lambda k: k in whitelist, d)
 
 
+def omit(blacklist, d):
+    return keyfilter(lambda k: k not in blacklist, d)
+
+
 def encode_datetime(obj):
     if isinstance(obj, datetime.datetime):
         return obj.timestamp()
@@ -236,6 +240,9 @@ def read_pdf(
     results = []
     # TODO: try and simplfy the code below
     for table in tables:
+        for col in table.columns:
+            if pd.isna(table[col]).all():
+                del table[col]
         if len(table.columns) != len(columns_xcoords):
             continue
         table.columns = column_names

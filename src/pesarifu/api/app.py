@@ -135,10 +135,14 @@ async def process_pdf(
             io.BytesIO(file_head + await data.target.read()), data.pdf_password
         )
         logger.info("Saved pdf to %s", pdf_path)
-        metadata = get_metadata_from_pdf(pdf_path)
+        pdf_type, metadata = get_metadata_from_pdf(pdf_path)
         metadata["email"] = data.sendto_email
         if data.source == "mpesa-full-statement":
-            safaricom.go(pdf_path=str(pdf_path.absolute()), metadata=metadata)
+            safaricom.go(
+                pdf_path=str(pdf_path.absolute()),
+                metadata=metadata,
+                pdf_type=pdf_type,
+            )
             # nothing(pdf_path=str(pdf_path.absolute()), metadata=metadata)
         else:
             raise NotImplementedError
@@ -157,7 +161,7 @@ async def process_pdf(
         return Template(
             template_name="error.html",
             context={
-                "reason": "Unable to process PDF file",
+                "reason": "the type of PDF you submitted is not yet supported.",
                 "app_home": settings.APP_BASE_URL,
             },
         )
@@ -166,7 +170,7 @@ async def process_pdf(
         return Template(
             template_name="error.html",
             context={
-                "reason": "Password required for encrypted PDF file",
+                "reason": "a password is required for an encrypted PDF file",
                 "app_home": settings.APP_BASE_URL,
             },
         )
@@ -175,7 +179,7 @@ async def process_pdf(
         return Template(
             template_name="error.html",
             context={
-                "reason": """An unknown error occurred, the admin has already been notified.\
+                "reason": """an unknown error occurred, the admin has already been notified.\
             Feel free to contact us directly with additional questions""",
                 "app_home": settings.APP_BASE_URL,
             },

@@ -1,0 +1,54 @@
+detail: safaricom_transfer
+        | mobile_transfer
+        | ( _buygoods_in | _buygoods_out | _agent_transact ) -> buygoods
+        | paybill
+
+!safaricom_transfer: _provider_charges -> reason | _loan -> reason
+!mobile_transfer: _customer_transfer | _funds_received | _reversal | _small_biz
+
+!_provider_charges: "Pay Merchant Charge"
+                   | "Airtime Purchase"
+                   | "Buy Bundles" _online
+                   | "Pay Bill Charge"
+                   | "Withdrawal Charge"
+                   | "Customer Transfer of Funds Charge"
+                   | "Pay Utility Reversal" /.+/
+
+!_loan: "OverDraft of Credit Party"
+      | "M-Shwari" ("Deposit" | "Withdraw")
+      | "KCB M-PESA Deposit"
+      | "KCB M-PESA Loan Repayment"
+      | "OD Loan Repayment to 232323 - M-PESA Overdraw"
+
+_customer_transfer: "Customer Transfer " _fuliza? "to" _mobile_info
+_funds_received: "Funds received from" _mobile_info
+_reversal: "Send Money Reversal via API to" _mobile_info
+_small_biz: ( _sme_send | _pochi ) _mobile_info
+
+_buygoods_out: "Merchant Payment" _fuliza? _online? "to" _buygoods_info
+_buygoods_in: ( "Business" | "Salary" | "Promotion" ) "Payment from" _buygoods_info
+_agent_transact: ( "Customer Withdrawal At" | "Deposit of Funds at" ) "Agent Till" _buygoods_info
+paybill: "Pay Bill" _online "to" _paybill_info
+
+
+_sme_send:  "Customer Send Money to Micro SME Business" ("with" _fuliza)? "to"?
+_pochi: "Customer Payment to Small Business to"
+extra_detail: /.+/
+
+
+_paybill_info: _sep? business_number  _sep? account_name "Acc." account_number
+_buygoods_info: _sep? business_number _sep? account_name ( ("via API." | "via WEB"i) extra_detail)?
+_mobile_info: _sep? maybe_number _sep? account_name
+_fuliza : "Fuliza" /M-?Pesa/
+_online: "Online"
+_sep: "-" | "–"
+
+
+account_name : /.+(?=Acc\.)/ | /.+(?=via API\.)/i | /.+(?=via WEB)/i  | /.+/
+maybe_number : /[*0-9]{10,13}/
+business_number : /[0-9]{6,8}/
+account_number: /.+/
+
+%import common.WS
+%ignore WS
+
