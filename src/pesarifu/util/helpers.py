@@ -2,7 +2,6 @@ import datetime
 import functools
 import json
 import logging.config
-import math
 import os
 import re
 import time
@@ -153,10 +152,9 @@ def convert_to_cash(v: str | float) -> Optional[float]:
         elif isinstance(v, str):
             cleaned = re.sub(r"\s|[^0-9.-]", "", v)
             result = float(cleaned)
-        if math.isnan(result):
-            return float(0)
         else:
-            return result
+            raise ValueError
+        return result
     except ValueError:
         logger.exception(f"Unable to convert {v} of type {type(v)} to float")
 

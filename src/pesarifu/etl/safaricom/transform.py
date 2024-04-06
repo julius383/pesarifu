@@ -1,3 +1,4 @@
+import math
 import os
 import re
 from datetime import datetime, timezone
@@ -185,10 +186,19 @@ def parse_phone(number: str) -> str:
 
 
 def transform_pdf_record(record):
+    paid_in = convert_to_cash(record["paid_in"])
+    withdrawn = convert_to_cash(record["withdrawn"])
+    if paid_in is None and withdrawn is None:
+        logger.warning("Unable to parse amount in record %s", record)
+        return
+    amount = (
+        (0 if paid_in is None or math.isnan(paid_in) else paid_in) - 0
+        if withdrawn is None or math.isnan(withdrawn)
+        else withdrawn
+    )
     transaction = {
         "transaction_reference": record["receipt_no"],
-        "amount": convert_to_cash(record["paid_in"])
-        - convert_to_cash(record["withdrawn"]),
+        "amount": amount,
         "initiated_at": isoparse(record["completion_time"] + "+03:00"),
         "original_detail": record["details"],
         "extra": {
@@ -201,7 +211,7 @@ def transform_pdf_record(record):
     try:
         info = parse_details(record["details"])
     except UnexpectedCharacters:
-        logger.warning("Unable to parse record %s", record)
+        logger.warning("Unable to parse detail in record %s", record)
         return
     transaction["other_account"] = info
     return transaction
