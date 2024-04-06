@@ -99,7 +99,7 @@ class DetailTransformer(Transformer):
                     lambda x: str.upper(x.group(0)),
                     x,
                 ),  # Better Title Case than str.title
-                lambda x: re.sub(r"null", "", x, re.IGNORECASE),
+                lambda x: re.sub(r"\s+null", "", x, flags=re.IGNORECASE),
                 str.strip,
             )
         }

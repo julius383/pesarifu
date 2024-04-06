@@ -2,6 +2,7 @@ import datetime
 import functools
 import json
 import logging.config
+import math
 import os
 import re
 import time
@@ -138,7 +139,9 @@ def normalize_key(key: Any) -> str:
 
 def normalize_name(name: str) -> str:
     return pipe(
-        name, lambda x: re.sub(r"lull", "", x, re.IGNORECASE), str.title
+        name,
+        lambda x: re.sub(r"\s+null", "", x, flags=re.IGNORECASE),
+        str.title,
     )
 
 
