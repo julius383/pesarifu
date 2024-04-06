@@ -145,13 +145,18 @@ def normalize_name(name: str) -> str:
 
 def convert_to_cash(v: str | float) -> Optional[float]:
     try:
+        result = None
         if isinstance(v, float):
-            return v
-        if isinstance(v, int):
-            return float(v)
-        if isinstance(v, str):
+            result = v
+        elif isinstance(v, int):
+            result = float(v)
+        elif isinstance(v, str):
             cleaned = re.sub(r"\s|[^0-9.-]", "", v)
-            return float(cleaned)
+            result = float(cleaned)
+        if math.isnan(result):
+            return float(0)
+        else:
+            return result
     except ValueError:
         logger.exception(f"Unable to convert {v} of type {type(v)} to float")
 

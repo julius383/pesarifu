@@ -16,8 +16,7 @@ detail: safaricom_transfer
 
 !_loan: "OverDraft of Credit Party"
       | "M-Shwari" ("Deposit" | "Withdraw")
-      | "KCB M-PESA Deposit"
-      | "KCB M-PESA Loan Repayment"
+      | "KCB M-PESA" ( "Deposit" | "Loan Repayment" | "Withdraw" | "Loan Request" )
       | "OD Loan Repayment to 232323 - M-PESA Overdraw"
 
 _customer_transfer: "Customer Transfer " _fuliza? "to" _mobile_info
@@ -27,8 +26,8 @@ _small_biz: ( _sme_send | _pochi ) _mobile_info
 
 _buygoods_out: "Merchant Payment" _fuliza? _online? "to" _buygoods_info
 _buygoods_in: ( "Business" | "Salary" | "Promotion" ) "Payment from" _buygoods_info
-_agent_transact: ( "Customer Withdrawal At" | "Deposit of Funds at" ) "Agent Till" _buygoods_info
-paybill: "Pay Bill" _online "to" _paybill_info
+_agent_transact: ( "Customer Withdrawal At" | "Deposit of Funds at" ) ("with" _fuliza)? "Agent Till" _buygoods_info
+paybill: "Pay Bill" _online _fuliza? "to" _paybill_info
 
 
 _sme_send:  "Customer Send Money to Micro SME Business" ("with" _fuliza)? "to"?
