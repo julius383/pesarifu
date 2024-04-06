@@ -35,10 +35,11 @@ app-setup:
     #!/usr/bin/env bash
     env POETRY_VIRTUALENVS_IN_PROJECT=true poetry install
     npm install
+    [[ -e examples ]] && export ENV_FOR_DYNACONF=development || export ENV_FOR_DYNACONF=production
     cat << EOF > .env
     #/usr/bin/env bash
     export PYTHONPATH=$PYTHONPATH:$(poetry env info --path)/lib/python3.10/site-packages
-    export ENV_FOR_DYNACONF=production
+    export ENV_FOR_DYNACONF=$ENV_FOR_DYNACONF
     export APP_ROOT="$(pwd)"
     export DYNACONF_APP_ROOT="$(pwd)"
     export ROOT_PATH_FOR_DYNACONF="$(pwd)/src/pesarifu/config/"
