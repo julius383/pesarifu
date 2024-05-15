@@ -4,15 +4,15 @@
 
 Make sure the following tools are installed in the deployment environment
 
-- [x] python3.10/poetry (python runtime and dependency manager)
-- [x] node/npm - nvm (javascript runtime and dependency manager)
-- [x] just (task runner)
+- [ ] python3.10/poetry (python runtime and dependency manager)
+- [ ] node/npm - nvm (javascript runtime and dependency manager)
+- [ ] just (task runner)
 - [ ] duckdb (OLAP engine)
-- [x] redis (message broker and result store for celery)
-- [x] poppler-utils (for pdftotext)
-- [x] java (for tabula-py)
-- [x] caddy (web server)
-- [x] postgresql-devel (libpq-dev)
+- [ ] redis (message broker and result store for celery)
+- [ ] poppler-utils (for pdftotext)
+- [ ] java (for tabula-py)
+- [ ] caddy (web server)
+- [ ] postgresql-devel (libpq-dev)
 
 
 Optionally also install
@@ -20,23 +20,20 @@ Optionally also install
 - eza (better `ls`)
 - ripgrep (better `grep`)
 - bat (better cat)
-- fzf (fuzzy finder) - install script
+- fzf (fuzzy finder)
 
 
 ## Server Configuration
 
-- [ ] setup Let's Encrypt TLS Certificate for HTTPS
-- [x] setup firewall
+- [ ] setup firewall
 - [ ] setup fail2ban
-- [x] setup ssh key only login
-- [x] setup sudo
-- [x] setup starship
+- [ ] setup ssh key only login
+- [ ] setup sudo
+- [ ] setup starship
 - [ ] setup cron schedule for `exports` and `uploads` cleanup
 - [ ] disable root login
-- [ ] configure log report service
-- [x] update packages
-- [ ] add to VPC with local computer
-- [x] create .demo file with url for report demo
+- [ ] update packages
+- [ ] create .demo file with url for report demo
 
 
 ## App Configuration

@@ -1,55 +1,100 @@
 # Application Structure
 
-Generate an update listing with `just overview`
+Generate an updated listing with `just overview`
 
 ```sh
 .
-├── doc                                    # project documentation
+├── alembic                                 # database migration
+│  ├── versions
+│  │  ├── 6e6e9fc78065_initial_migration.py
+│  │  └── e7a3b53426f3_create_contact_request_table.py
+│  ├── env.py
+│  └── script.py.mako
+├── docs
+│  ├── adding-financial-providers.md
+│  ├── app-structure.md
+│  ├── architecture.png
+│  ├── database.md
+│  ├── deploy.md
+│  ├── maintenance-checklist.md
+│  ├── monitoring.md
+│  ├── reports.md
+│  └── tasks-workflow.md
+├── examples
+│  ├── 'Financial Report by Pesarifu for John Mwangi.pdf'
+│  └── mpesa.pdf
+├── services
+│  └── app.service
 ├── src
-│  └── pesarifu
-│  │  ├── api                              # definition for app.pesarifu.com
+│  ├── pesarifu
+│  │  ├── api
 │  │  │  ├── __init__.py
-│  │  │  ├── app.py
-│  │  │  └── dependencies.py
+│  │  │  └── app.py
 │  │  ├── config
 │  │  │  ├── celery.py
-│  │  │  └── constants.py
-│  │  ├── db                               # Data Model
+│  │  │  ├── config.py
+│  │  │  └── settings.toml
+│  │  ├── db                                # data model
+│  │  │  ├── load.py
 │  │  │  ├── models.py
+│  │  │  ├── seed.py
 │  │  │  └── util.py
 │  │  ├── etl
-│  │  │  ├── safaricom                     # workflow definition for Safaricom
-│  │  │  │  ├── __init__.py                # task entry point definition for provider
-│  │  │  │  ├── extract.py                 # extract fields from supported sources e.g PDF and API JSON
-│  │  │  │  ├── load.py                    # store and retrieve data from data store
-│  │  │  │  ├── tasks.py                   # celery tasks definitions
-│  │  │  │  └── transform.py               # process and enrich data after extract before load
+│  │  │  ├── safaricom
+│  │  │  │  ├── __init__.py
+│  │  │  │  ├── details_grammar.ebnf
+│  │  │  │  ├── extract.py
+│  │  │  │  ├── load.py
+│  │  │  │  ├── tasks.py
+│  │  │  │  └── transform.py
 │  │  │  ├── stanchart
 │  │  │  └── __init__.py
 │  │  ├── templates
-│  │  │  ├── email-report.html.jinja       # template for report email
-│  │  │  └── index.html                    # main page for app.pesarifu.com
+│  │  │  ├── base.html
+│  │  │  ├── email-report.html.jinja
+│  │  │  ├── error.html
+│  │  │  ├── index.html
+│  │  │  ├── privacy-policy.html
+│  │  │  └── success.html
 │  │  └── util
-│  │     ├── export.py                     # functions for exporting transactions to various formats
+│  │     ├── export.py                      # functions for exporting transactions to various formats
 │  │     ├── helpers.py
 │  │     ├── notify.py
 │  │     └── tasks.py
-│  ├── reports                             # analytical reports
+│  ├── reports                              # Evidence Report Generation
+│  │  ├── components
+│  │  │  ├── Logo.svelte
+│  │  │  ├── MyHeader.svelte
+│  │  │  └── pesarifu-logo.svg
 │  │  ├── pages
-│  │  │  └── pesarifu.md
-│  │  ├── sources                          # definition for data stores available for use in reports
+│  │  │  ├── +layout.svelte
+│  │  │  ├── [user_uuid].md
+│  │  │  └── users.md
+│  │  ├── partials
+│  │  │  ├── account-comparison.md
+│  │  │  └── period-comparison.md
+│  │  ├── sources
 │  │  │  └── pesarifu
 │  │  │     ├── accounts.sql
 │  │  │     ├── connection.yaml
 │  │  │     └── transactions.sql
 │  │  ├── evidence.plugins.yaml
+│  │  ├── package-lock.json
+│  │  ├── package.json
 │  │  └── README.md
-│  └── static                              # css for app.pesarifu.com/
-│     └── src
-│        └── input.css
-├── justfile                               # project related tasks definition
+│  └── website                              # Landing Page
+├── static
+│  └── src
+│     └── input.css
+├── tests
+│  ├── __init__.py
+│  └── test_details_parser.py
+├── alembic.ini
+├── Caddyfile                               # reverse proxy configuration for web server
+├── justfile                                # project related tasks
+├── package-lock.json
+├── package.json
 ├── pyproject.toml
 ├── README.md
 └── tailwind.config.js
-
 ```
