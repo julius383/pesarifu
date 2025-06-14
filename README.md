@@ -11,8 +11,8 @@ features include:
 - Export transactions to CSV, JSON and Excel files.
 - Report generation using [Evidence][1]
 
-See `examples/mpesa.pdf` for an example statement and
-`examples/'Financial Report by Pesarifu for John Mwangi.pdf'` for an example
+See [examples/mpesa.pdf](https://github.com/julius383/pesarifu/blob/main/examples/mpesa.pdf) for an example statement and
+[examples/Financial Report by Pesarifu for John Mwangi.pdf](https://github.com/julius383/pesarifu/blob/main/examples/Financial%20Report%20by%20Pesarifu%20for%20John%20Mwangi.pdf) for an example
 output report produced by the application.
 
 Additional documentation can be found in `docs/`.
